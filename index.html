@@ -80,15 +80,23 @@ const grid=document.getElementById('projectGrid'),home=document.getElementById('
 const GITHUB_ASSET_TREE_URL='https://api.github.com/repos/WooHyeok98/WooHyeok98.github.io/git/trees/main?recursive=1';
 const GITHUB_RAW_BASE='https://raw.githubusercontent.com/WooHyeok98/WooHyeok98.github.io/main/';
 const IMAGE_EXTENSIONS=['.avif','.gif','.jpg','.jpeg','.png','.webp'];
+const GITHUB_CONTENTS_URL='https://api.github.com/repos/WooHyeok98/WooHyeok98.github.io/contents/';
+const GITHUB_BRANCH='main';
+const GITHUB_TOKEN_KEY='kim-woo-hyeok-portfolio-github-token';
+const PROJECT_META_FILE='project.json';
+const PROJECT_ID_PATTERN=/^[a-z0-9][a-z0-9-]*$/;
 let githubAssetMap=new Map();
+let githubProjectIds=[];
 let githubAssetPromise=null;
 function loadGitHubAssets(){
  if(!githubAssetPromise){
   githubAssetPromise=fetch(GITHUB_ASSET_TREE_URL,{cache:'no-store'})
    .then(response=>{if(!response.ok)throw new Error('GitHub 이미지 목록을 불러오지 못했습니다.');return response.json();})
    .then(data=>{
-    const next=new Map();
+    const next=new Map(),metaIds=[];
     (data.tree||[]).forEach(item=>{
+     const meta=item.type==='blob'&&item.path.match(/^asset\/([^/]+)\/project\.json$/);
+     if(meta&&PROJECT_ID_PATTERN.test(meta[1])){metaIds.push(meta[1]);return;}
      if(item.type!=='blob'||!item.path.startsWith('asset/')||typeof item.size!=='number'||item.size<100||!IMAGE_EXTENSIONS.some(ext=>item.path.toLowerCase().endsWith(ext)))return;
      const parts=item.path.split('/');
      if(parts.length<3)return;
@@ -101,16 +109,91 @@ function loadGitHubAssets(){
      });
     });
     next.forEach(items=>items.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'})));
-    githubAssetMap=next;
+    githubAssetMap=next;githubProjectIds=metaIds;
     return githubAssetMap;
    })
-   .catch(error=>{console.warn('공용 GitHub 이미지 목록:',error);githubAssetMap=new Map();return githubAssetMap;});
+   .catch(error=>{console.warn('공용 GitHub 이미지 목록:',error);githubAssetMap=new Map();githubProjectIds=[];return githubAssetMap;});
  }
  return githubAssetPromise;
 }
 async function getGitHubProjectAssets(projectId){
  await loadGitHubAssets();
  return githubAssetMap.get(projectId)||[];
+}
+// Projects added from the admin menu live in asset/{project-id}/project.json.
+async function loadGitHubProjects(){
+ await loadGitHubAssets();
+ const known=new Set(projects.map(project=>project.id));
+ const loaded=await Promise.all(githubProjectIds.filter(id=>!known.has(id)).map(async id=>{
+  try{
+   const response=await fetch(GITHUB_RAW_BASE+'asset/'+id+'/'+PROJECT_META_FILE,{cache:'no-store'});
+   if(!response.ok)return null;
+   const meta=await response.json();
+   if(!meta||typeof meta.title!=='string'||!meta.title.trim())return null;
+   const text=key=>typeof meta[key]==='string'?meta[key]:'';
+   return {id,title:meta.title.trim(),subtitle:text('subtitle'),ko:text('ko'),type:text('type'),year:text('year'),role:text('role')||'Personal Work',location:text('location'),program:text('program'),createdAt:Number(meta.createdAt)||0,pages:[],cover:null,custom:true,github:true};
+  }catch(error){console.warn(error);return null;}
+ }));
+ const added=loaded.filter(Boolean).sort((a,b)=>a.createdAt-b.createdAt);
+ projects.push(...added);
+ return added.length;
+}
+function getGitHubToken(){try{return localStorage.getItem(GITHUB_TOKEN_KEY)||'';}catch(error){return '';}}
+function clearGitHubToken(){try{localStorage.removeItem(GITHUB_TOKEN_KEY);}catch(error){}}
+function requestGitHubToken(){
+ let token=getGitHubToken();
+ if(token)return token;
+ token=(prompt('GitHub에 바로 저장하려면 이 저장소의 Contents 쓰기 권한이 있는 Personal Access Token을 입력해 주세요.\n토큰은 이 브라우저에만 저장됩니다. 취소하면 이 기기에만 저장됩니다.')||'').trim();
+ if(token){try{localStorage.setItem(GITHUB_TOKEN_KEY,token);}catch(error){}}
+ return token;
+}
+async function githubContents(method,path,body){
+ const token=getGitHubToken();
+ if(!token)throw new Error('GitHub 토큰이 없습니다.');
+ const url=GITHUB_CONTENTS_URL+path.split('/').map(encodeURIComponent).join('/')+(method==='GET'?'?ref='+GITHUB_BRANCH:'');
+ const response=await fetch(url,{method,cache:'no-store',headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},body:body?JSON.stringify({branch:GITHUB_BRANCH,...body}):undefined});
+ if(response.status===401){clearGitHubToken();throw new Error('GitHub 토큰이 올바르지 않습니다. 다시 시도하면 토큰을 새로 입력할 수 있습니다.');}
+ if(response.status===403||response.status===404){throw new Error('GitHub 토큰에 이 저장소의 쓰기 권한이 없습니다.');}
+ if(response.status===422)throw new Error('같은 이름의 파일이 이미 있습니다: '+path);
+ if(!response.ok)throw new Error('GitHub 저장 실패 ('+response.status+')');
+ return response.json();
+}
+function encodeBase64Text(text){
+ let binary='';new TextEncoder().encode(text).forEach(byte=>{binary+=String.fromCharCode(byte);});
+ return btoa(binary);
+}
+function readFileBase64(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');
+  reader.onerror=()=>reject(reader.error||new Error('파일을 읽지 못했습니다.'));
+  reader.readAsDataURL(file);
+ });
+}
+function makeProjectSlug(title){
+ const base=title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48)||'project';
+ const taken=new Set([...projects.map(project=>project.id),...githubAssetMap.keys(),...githubProjectIds]);
+ let id=base,n=2;
+ while(taken.has(id)||!PROJECT_ID_PATTERN.test(id))id=base+'-'+n++;
+ return id;
+}
+function saveProjectToGitHub(project){
+ const meta={title:project.title,subtitle:project.subtitle,ko:project.ko,type:project.type,year:project.year,role:project.role,location:project.location,program:project.program,createdAt:Date.now()};
+ return githubContents('PUT','asset/'+project.id+'/'+PROJECT_META_FILE,{message:'Add project '+project.title,content:encodeBase64Text(JSON.stringify(meta,null,1)+'\n')});
+}
+async function deleteProjectFromGitHub(project){
+ const path='asset/'+project.id+'/'+PROJECT_META_FILE;
+ const current=await githubContents('GET',path);
+ await githubContents('DELETE',path,{message:'Delete project '+project.title,sha:current.sha});
+}
+// Commits are sequential: parallel writes to one branch conflict.
+async function uploadImagesToGitHub(project,files,onProgress){
+ for(let i=0;i<files.length;i++){
+  onProgress(i+1,files.length);
+  const name=files[i].name.replace(/[\\/]/g,'-');
+  await githubContents('PUT','asset/'+project.id+'/'+name,{message:'Add '+name+' to '+project.title,content:await readFileBase64(files[i])});
+ }
+ githubAssetPromise=null;
 }
 let imageDbPromise;
 
@@ -227,9 +310,17 @@ function setupProjectUploads(p){
   const files=Array.from(input.files||[]);if(!files.length)return;
   const valid=files.filter(file=>file.type.startsWith('image/'));
   if(!valid.length){status.textContent='이미지 파일을 선택해 주세요.';input.value='';return;}
+  const toGitHub=PROJECT_ID_PATTERN.test(p.id)&&!!requestGitHubToken();
   trigger.disabled=true;status.textContent=`${valid.length}개 이미지 저장 중…`;
-  try{await saveProjectUploads(p.id,valid);await renderUploadedImages(p);status.textContent=`${valid.length}개 이미지를 ${p.title} 프로젝트에 저장했습니다.`;}
-  catch(error){status.textContent='저장하지 못했습니다: '+error.message;}
+  try{
+   if(toGitHub){
+    await uploadImagesToGitHub(p,valid,(done,total)=>{status.textContent=`GitHub에 업로드 중… ${done}/${total}`;});
+    await renderUploadedImages(p);status.textContent=`${valid.length}개 이미지를 GitHub asset/${p.id}/ 폴더에 올렸습니다. 모든 방문자에게 표시됩니다.`;
+   }else{
+    await saveProjectUploads(p.id,valid);await renderUploadedImages(p);status.textContent=`${valid.length}개 이미지를 이 브라우저에만 저장했습니다.`;
+   }
+  }
+  catch(error){githubAssetPromise=null;await renderUploadedImages(p);status.textContent='저장하지 못했습니다: '+error.message;}
   finally{trigger.disabled=false;input.value='';}
  });
  const deleteButton=document.getElementById('deleteProjectButton');
@@ -243,7 +334,10 @@ async function deleteCurrentProject(p){
    const tx=db.transaction('images','readwrite'),store=tx.objectStore('images');records.forEach(record=>store.delete(record.id));
    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('프로젝트 이미지 삭제 실패'));
   }));
-  await saveProjectRecord({id:p.id,deleted:true,custom:!!p.custom});
+  if(p.github){
+   if(!requestGitHubToken())throw new Error('GitHub에 저장된 프로젝트는 토큰이 있어야 삭제할 수 있습니다.');
+   await deleteProjectFromGitHub(p);githubAssetPromise=null;
+  }else await saveProjectRecord({id:p.id,deleted:true,custom:!!p.custom});
   projects=projects.filter(item=>item.id!==p.id);activeProjectId=null;showHome();renderHome();
  }catch(error){alert('프로젝트를 삭제하지 못했습니다: '+error.message);}
 }
@@ -252,7 +346,7 @@ function openProject(id,push=true){
  activeProjectId=id;home.classList.add('hidden');detail.classList.remove('hidden');
  detail.innerHTML=`<section class="detail-top"><div><a class="back" href="#" onclick="showHome();return false;">← Back to index</a><p class="eyebrow">${escapeHTML(p.role||'Personal Work')} · ${escapeHTML(p.type||'Project')}</p><h1 class="detail-title">${escapeHTML(p.title)}</h1><p class="detail-subtitle">${escapeHTML(p.subtitle||'')}${p.ko?' / '+escapeHTML(p.ko):''}</p></div>
  <div class="detail-meta"><div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">${escapeHTML(p.year||'')}</div></div><div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${escapeHTML(p.type||'')}</div></div><div class="meta-item"><div class="meta-label">Program</div><div class="meta-value">${escapeHTML(p.program||'')}</div></div><div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${escapeHTML(p.location||'')}</div></div></div></section>
- <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">공용 이미지는 GitHub asset/{프로젝트ID}/ 폴더에 올리면 모든 방문자에게 표시됩니다. 파일 확장자(.jpg, .jpeg, .png, .webp, .gif, .avif)를 포함해 업로드해 주세요. 아래 Add images는 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/ · 브라우저 업로드는 이 기기에만 저장됩니다.</p></section>
+ <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">GitHub 토큰을 입력하면 Add images가 GitHub asset/{프로젝트ID}/ 폴더에 바로 올라가 모든 방문자에게 표시됩니다. 토큰이 없으면 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/</p></section>
  <section class="uploaded-gallery" id="uploadedGallery" aria-label="추가한 프로젝트 이미지"></section>
   <div class="detail-bottom"><button onclick="showHome()">← All projects</button><button onclick="openProject('${projects[(projects.indexOf(p)+1)%projects.length].id}')">Next project →</button></div>`;
  setupProjectUploads(p);renderUploadedImages(p);updateAdminUI();window.scrollTo(0,0);if(push&&location.hash.slice(1)!==id)history.pushState(null,'','#'+id);
@@ -270,8 +364,13 @@ function closeProjectDialog(){document.getElementById('projectDialog').close();}
 async function createProject(event){
  event.preventDefault();if(!isAdmin)return;
  const form=event.currentTarget,data=new FormData(form),title=String(data.get('title')||'').trim();if(!title)return;
- const project={id:'project-'+makeId(),title,subtitle:String(data.get('subtitle')||'').trim(),ko:'',type:String(data.get('type')||'Personal Work').trim(),year:String(data.get('year')||new Date().getFullYear()).trim(),pages:[],cover:null,role:'Personal Work',location:String(data.get('location')||'').trim(),program:String(data.get('program')||'').trim(),custom:true};
- try{await saveProjectRecord(project);projects.push(project);closeProjectDialog();renderHome();openProject(project.id);}
+ await loadGitHubAssets();
+ const project={id:makeProjectSlug(title),title,subtitle:String(data.get('subtitle')||'').trim(),ko:'',type:String(data.get('type')||'Personal Work').trim(),year:String(data.get('year')||new Date().getFullYear()).trim(),pages:[],cover:null,role:'Personal Work',location:String(data.get('location')||'').trim(),program:String(data.get('program')||'').trim(),custom:true};
+ try{
+  if(requestGitHubToken()){await saveProjectToGitHub(project);project.github=true;githubAssetPromise=null;}
+  else await saveProjectRecord(project);
+  projects.push(project);closeProjectDialog();renderHome();openProject(project.id);
+ }
  catch(error){alert('프로젝트를 저장하지 못했습니다: '+error.message);}
 }
 function setupAdmin(){
@@ -287,6 +386,7 @@ function setupAdmin(){
 async function init(){
  setupAdmin();await loadProjects();renderHome();
  const initial=location.hash.slice(1);if(projects.some(p=>p.id===initial))openProject(initial,false);
+ if(await loadGitHubProjects()){renderHome();if(!activeProjectId&&projects.some(p=>p.id===location.hash.slice(1)))openProject(location.hash.slice(1),false);}
 }
 init();
 </script>
