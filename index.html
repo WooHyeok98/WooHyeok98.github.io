@@ -25,7 +25,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 .detail-top{padding:70px var(--gutter) 36px;display:grid;grid-template-columns:1.4fr .6fr;gap:5vw;align-items:end}.back{font-size:11px;letter-spacing:.13em;color:#777;text-transform:uppercase;display:inline-block;margin-bottom:45px}.back:hover{color:#111}
 .detail-title{font-size:clamp(38px,7vw,100px);line-height:.9;letter-spacing:-.075em;font-weight:400;margin:0 0 14px}.detail-subtitle{font-size:15px;color:#666;margin:0;line-height:1.5}
 .detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;padding-bottom:4px}.meta-item{border-top:1px solid var(--line);padding-top:8px}.meta-label{font-size:10px;letter-spacing:.14em;color:#999;text-transform:uppercase;margin-bottom:7px}.meta-value{font-size:12px;line-height:1.5;color:#444}
-.upload-tools{margin:8px var(--gutter) 26px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:10px 24px;align-items:center}.upload-title{font-size:11px;letter-spacing:.15em;color:#555;margin:0 0 7px}.upload-note{font-size:12px;line-height:1.6;color:#888;margin:0}.upload-actions{display:flex;align-items:center;gap:10px}.upload-button{border:1px solid #aaa;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:background .2s,border-color .2s}.upload-button:hover{background:#181818;color:#fff;border-color:#181818}.upload-status{grid-column:1/-1;font-size:11px;color:#888;margin:0;line-height:1.6}.uploaded-gallery{padding:0 var(--gutter) 28px;display:flex;flex-direction:column;gap:18px}.uploaded-gallery:empty{display:none}.page-frame{width:100%;background:#fff;line-height:0;margin:0}.page-frame img{width:100%;height:auto;display:block}.uploaded-frame{position:relative}.uploaded-frame img{max-height:none}.uploaded-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0 0;font-size:11px;line-height:1.4;letter-spacing:.06em;color:#888}.remove-upload{font-size:11px;letter-spacing:.08em;color:#999;text-transform:uppercase;border:1px solid var(--line);padding:6px 9px;white-space:nowrap}.remove-upload:hover{color:#111;border-color:#777}.detail-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.detail-bottom{border-top:1px solid var(--line);padding:24px var(--gutter) 60px;display:flex;justify-content:space-between;align-items:center}.detail-bottom button{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#777}.detail-bottom button:hover{color:#111}
+.upload-tools{margin:8px var(--gutter) 26px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:10px 24px;align-items:center}.upload-title{font-size:11px;letter-spacing:.15em;color:#555;margin:0 0 7px}.upload-note{font-size:12px;line-height:1.6;color:#888;margin:0}.upload-actions{display:flex;align-items:center;gap:10px}.upload-button{border:1px solid #aaa;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:background .2s,border-color .2s}.upload-button:hover{background:#181818;color:#fff;border-color:#181818}.upload-status{grid-column:1/-1;font-size:11px;color:#888;margin:0;line-height:1.6}.uploaded-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.uploaded-gallery:empty{display:none}.page-frame{width:100%;background:#fff;line-height:0;margin:0}.page-frame img{width:100%;height:auto;display:block}.uploaded-frame{position:relative}.uploaded-frame img{max-height:none}.uploaded-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0 0;font-size:11px;line-height:1.4;letter-spacing:.06em;color:#888}.remove-upload{font-size:11px;letter-spacing:.08em;color:#999;text-transform:uppercase;border:1px solid var(--line);padding:6px 9px;white-space:nowrap}.remove-upload:hover{color:#111;border-color:#777}.detail-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.detail-bottom{border-top:1px solid var(--line);padding:24px var(--gutter) 60px;display:flex;justify-content:space-between;align-items:center}.detail-bottom button{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#777}.detail-bottom button:hover{color:#111}
 .hidden{display:none!important}
 @media(max-width:700px){.topbar{height:58px}.topnav{gap:14px;font-size:11px}.hero{grid-template-columns:1fr;padding-top:76px;padding-bottom:58px;gap:40px}.hero h1{font-size:clamp(58px,16vw,110px)}.hero-right{gap:14px}.project-grid{grid-template-columns:1fr;row-gap:42px;padding-top:20px}.cover{aspect-ratio:1.28/1}.about{grid-template-columns:1fr;gap:24px;padding-top:42px;padding-bottom:65px}.detail-top{grid-template-columns:1fr;padding-top:45px;gap:36px}.back{margin-bottom:36px}.detail-meta{grid-template-columns:1fr 1fr}.detail-gallery{gap:9px;padding-top:8px}.footer{gap:15px;flex-wrap:wrap}.detail-bottom{padding-bottom:40px}}
 @media(min-width:1100px){.project-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:82px}.cover{aspect-ratio:1.58/1}.detail-gallery{max-width:1500px;margin:auto}}
@@ -43,7 +43,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 <body>
 <header class="topbar">
 <a class="brand" href="#" onclick="showHome();return false;">KIM WOO HYEOK</a>
-<nav class="topnav"><a href="#" onclick="showHome();return false;">Index</a><a href="#about" onclick="showHome();">About</a><a href="mailto:tony3187@naver.com">Contact</a><button class="mode-toggle" id="modeToggle" type="button" aria-label="관리자 모드로 전환">MANAGE</button></nav>
+<nav class="topnav"><a href="#" onclick="showHome();return false;">Index</a><a href="#about" onclick="showHome(false);">About</a><a href="mailto:tony3187@naver.com">Contact</a><button class="mode-toggle hidden" id="modeToggle" type="button" aria-label="관리자 모드로 전환">MANAGE</button></nav>
 </header>
 <main id="home">
 <section class="hero">
@@ -69,12 +69,11 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 </dialog>
 <footer class="footer"><span>© 2026 KIM WOO HYEOK</span><span>ARCHITECTURE PORTFOLIO · VOL. 01</span><a href="mailto:tony3187@naver.com">tony3187@naver.com</a></footer>
 <script>
-const BUILT_IN_PROJECTS = [{"id": "on-the-loops", "title": "ON THE LOOPS", "subtitle": "Car-friendly culture space for drivers", "ko": "대청호 자동차문화공간 프로젝트", "type": "Graduation Project", "year": "2024", "pages": [3, 4, 5, 6, 7, 8, 9, 10, 11], "cover": 3, "role": "Personal Work", "location": "Hoenam-myeon, Boeun-gun, Korea", "program": "Museum, Motel, F&B, Garage, Community"}, {"id": "square-rande-vous", "title": "SQUARE-RANDE VOUS", "subtitle": "주거 속 광장들의 만남", "ko": "캠퍼스 공동주택 프로젝트", "type": "3-2 Academic Project", "year": "2022", "pages": [12, 13, 14, 15, 16, 17], "cover": 12, "role": "Personal Work", "location": "Gung-dong, Yuseong-gu, Daejeon, Korea", "program": "Housing"}, {"id": "canyon-park", "title": "CANYON PARK", "subtitle": "도심 속 휴식처이자 브랜드 체험공간", "ko": "플래그십 몰을 이용한 어반아트리움 복합개발 프로젝트", "type": "4-1 Academic Project", "year": "2023", "pages": [18, 19, 20, 21, 22], "cover": 18, "role": "Team Work · 2인", "location": "Nasung-dong, Sejong, Korea", "program": "Mixed-use Development"}, {"id": "memories", "title": "추억은 방울방울", "subtitle": "추억을 기록하고 전시하다", "ko": "파빌리온 프로젝트", "type": "Competition Project", "year": "2023", "pages": [23, 24], "cover": 23, "role": "Team Work · 4인", "location": "Culture Factory Central Square, Chungju, Korea", "program": "Pavilion"}, {"id": "water-melon-house", "title": "WATER MELON HOUSE", "subtitle": "세종시 해밀동 D-29 단독주택 프로젝트", "ko": "", "type": "Office Work", "year": "2025", "pages": [25, 26, 27, 28], "cover": 25, "role": "Office Work", "location": "Haemil-dong, Sejong, Korea", "program": "Detached House"}, {"id": "guro-officetel", "title": "구로동 오피스텔 인테리어", "subtitle": "Interior Design Project", "ko": "", "type": "Office Work", "year": "2025", "pages": [29, 30, 31], "cover": 29, "role": "Office Work", "location": "Guro-dong, Seoul, Korea", "program": "Interior Design"}];
+const BUILT_IN_PROJECTS = [{"id": "on-the-loops", "title": "ON THE LOOPS", "subtitle": "Car-friendly culture space for drivers", "ko": "대청호 자동차문화공간 프로젝트", "type": "Graduation Project", "year": "2024", "pages": [], "cover": null, "role": "Personal Work", "location": "Hoenam-myeon, Boeun-gun, Korea", "program": "Museum, Motel, F&B, Garage, Community"}, {"id": "square-rande-vous", "title": "SQUARE-RANDE VOUS", "subtitle": "주거 속 광장들의 만남", "ko": "캠퍼스 공동주택 프로젝트", "type": "3-2 Academic Project", "year": "2022", "pages": [], "cover": null, "role": "Personal Work", "location": "Gung-dong, Yuseong-gu, Daejeon, Korea", "program": "Housing"}, {"id": "canyon-park", "title": "CANYON PARK", "subtitle": "도심 속 휴식처이자 브랜드 체험공간", "ko": "플래그십 몰을 이용한 어반아트리움 복합개발 프로젝트", "type": "4-1 Academic Project", "year": "2023", "pages": [], "cover": null, "role": "Team Work · 2인", "location": "Nasung-dong, Sejong, Korea", "program": "Mixed-use Development"}, {"id": "memories", "title": "추억은 방울방울", "subtitle": "추억을 기록하고 전시하다", "ko": "파빌리온 프로젝트", "type": "Competition Project", "year": "2023", "pages": [], "cover": null, "role": "Team Work · 4인", "location": "Culture Factory Central Square, Chungju, Korea", "program": "Pavilion"}, {"id": "water-melon-house", "title": "WATER MELON HOUSE", "subtitle": "세종시 해밀동 D-29 단독주택 프로젝트", "ko": "", "type": "Office Work", "year": "2025", "pages": [], "cover": null, "role": "Office Work", "location": "Haemil-dong, Sejong, Korea", "program": "Detached House"}, {"id": "guro-officetel", "title": "구로동 오피스텔 인테리어", "subtitle": "Interior Design Project", "ko": "", "type": "Office Work", "year": "2025", "pages": [], "cover": null, "role": "Office Work", "location": "Guro-dong, Seoul, Korea", "program": "Interior Design"}];
 let projects = [...BUILT_IN_PROJECTS];
 let isAdmin = false;
 let activeProjectId = null;
 const grid=document.getElementById('projectGrid'),home=document.getElementById('home'),detail=document.getElementById('detail');
-const img=n=>'asset/page-'+String(n).padStart(2,'0')+'.webp';
 
 // Public project images are discovered from GitHub's repository tree.
 // Add images to asset/{project-id}/ and they appear on that project's pages.
@@ -187,14 +186,13 @@ async function refreshProjectCardCover(projectId){
   const project=projects.find(item=>item.id===projectId);
   if(shared.length){cover.innerHTML=`<img src="${shared[0].url}" alt="${escapeHTML(project?.title||'Project')} project cover" loading="lazy">`;return;}
   if(records.length){cover.innerHTML=`<img src="${URL.createObjectURL(records[0].blob)}" alt="Project image" loading="lazy">`;return;}
-  if(project&&project.cover)cover.innerHTML=`<img src="${img(project.cover)}" alt="${escapeHTML(project.title)} project cover" loading="lazy">`;
-  else cover.innerHTML='<span class="no-cover">PROJECT IMAGE</span>';
+  cover.innerHTML='<span class="no-cover">PROJECT IMAGE</span>';
  }catch(error){console.warn(error);}
 }
 function renderHome(){
  grid.innerHTML=projects.map((p,i)=>`<article class="project-card">
   <a class="project-card-link" href="#${p.id}" onclick="openProject('${p.id}');return false;">
-   <div class="cover" data-cover-for="${p.id}">${p.cover?`<img src="${img(p.cover)}" alt="${escapeHTML(p.title)} project cover" loading="${i<2?'eager':'lazy'}">`:'<span class="no-cover">PROJECT IMAGE</span>'}</div>
+   <div class="cover" data-cover-for="${p.id}"></div>
    <div class="card-info"><div><h2 class="card-title">${escapeHTML(p.title)}</h2><p class="card-sub">${escapeHTML(p.subtitle)}${p.ko?' · '+escapeHTML(p.ko):''}</p></div><span class="card-year">${escapeHTML(p.year)}</span></div>
   </a></article>`).join('');
  document.getElementById('projectCount').textContent=`${String(projects.length).padStart(2,'0')} PROJECTS`;
@@ -205,15 +203,13 @@ async function renderUploadedImages(p){
  const container=document.getElementById('uploadedGallery');if(!container)return;
  try{
   const [shared,records]=await Promise.all([getGitHubProjectAssets(p.id),getProjectUploads(p.id)]);
-  const originalGallery=document.getElementById('originalGallery');
-  if(originalGallery)originalGallery.classList.toggle('hidden',shared.length>0||records.length>0||!p.pages||p.pages.length===0);
   const sharedMarkup=shared.map(item=>`<figure class="page-frame uploaded-frame"><img src="${item.url}" alt="${escapeHTML(p.title)} — ${escapeHTML(item.name)}" loading="lazy"><figcaption class="uploaded-caption"><span>GITHUB ASSET · ${escapeHTML(item.name)}</span></figcaption></figure>`).join('');
   const localMarkup=records.map(record=>`<figure class="page-frame uploaded-frame">
    <img src="${URL.createObjectURL(record.blob)}" alt="${escapeHTML(record.name)}">
    ${isAdmin?`<figcaption class="uploaded-caption"><span>LOCAL IMAGE · ${escapeHTML(record.name)}</span><button class="remove-upload" type="button" data-upload-id="${record.id}">DELETE ×</button></figcaption>`:''}
   </figure>`).join('');
   container.innerHTML=sharedMarkup+localMarkup;
-  if(!shared.length&&!records.length&&(!p.pages||p.pages.length===0))container.innerHTML='<p class="empty-project">아직 등록된 프로젝트 이미지가 없습니다. GitHub의 asset 프로젝트 폴더에 이미지를 추가해 주세요.</p>';
+  if(!shared.length&&!records.length)container.innerHTML='<p class="empty-project">아직 등록된 프로젝트 이미지가 없습니다. GitHub의 asset 프로젝트 폴더에 이미지를 추가해 주세요.</p>';
   container.querySelectorAll('[data-upload-id]').forEach(button=>button.addEventListener('click',async()=>{
    if(!isAdmin||!confirm('이 브라우저에 저장된 이미지를 삭제할까요?'))return;
    button.disabled=true;
@@ -251,18 +247,24 @@ async function deleteCurrentProject(p){
   projects=projects.filter(item=>item.id!==p.id);activeProjectId=null;showHome();renderHome();
  }catch(error){alert('프로젝트를 삭제하지 못했습니다: '+error.message);}
 }
-function openProject(id){
- const p=projects.find(x=>x.id===id);if(!p)return showHome();
+function openProject(id,push=true){
+ const p=projects.find(x=>x.id===id);if(!p)return showHome(push);
  activeProjectId=id;home.classList.add('hidden');detail.classList.remove('hidden');
  detail.innerHTML=`<section class="detail-top"><div><a class="back" href="#" onclick="showHome();return false;">← Back to index</a><p class="eyebrow">${escapeHTML(p.role||'Personal Work')} · ${escapeHTML(p.type||'Project')}</p><h1 class="detail-title">${escapeHTML(p.title)}</h1><p class="detail-subtitle">${escapeHTML(p.subtitle||'')}${p.ko?' / '+escapeHTML(p.ko):''}</p></div>
  <div class="detail-meta"><div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">${escapeHTML(p.year||'')}</div></div><div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${escapeHTML(p.type||'')}</div></div><div class="meta-item"><div class="meta-label">Program</div><div class="meta-value">${escapeHTML(p.program||'')}</div></div><div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${escapeHTML(p.location||'')}</div></div></div></section>
  <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">공용 이미지는 GitHub asset/{프로젝트ID}/ 폴더에 올리면 모든 방문자에게 표시됩니다. 파일 확장자(.jpg, .jpeg, .png, .webp, .gif, .avif)를 포함해 업로드해 주세요. 아래 Add images는 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/ · 브라우저 업로드는 이 기기에만 저장됩니다.</p></section>
  <section class="uploaded-gallery" id="uploadedGallery" aria-label="추가한 프로젝트 이미지"></section>
- <section class="detail-gallery" id="originalGallery">${(p.pages||[]).map((n,i)=>`<figure class="page-frame"><img src="${img(n)}" alt="${escapeHTML(p.title)} — portfolio page ${i+1}" loading="${i===0?'eager':'lazy'}"></figure>`).join('')}</section>
- <div class="detail-bottom"><button onclick="showHome()">← All projects</button><button onclick="openProject('${projects[(projects.indexOf(p)+1)%projects.length].id}')">Next project →</button></div>`;
- setupProjectUploads(p);renderUploadedImages(p);updateAdminUI();window.scrollTo(0,0);history.replaceState(null,'','#'+id);
+  <div class="detail-bottom"><button onclick="showHome()">← All projects</button><button onclick="openProject('${projects[(projects.indexOf(p)+1)%projects.length].id}')">Next project →</button></div>`;
+ setupProjectUploads(p);renderUploadedImages(p);updateAdminUI();window.scrollTo(0,0);if(push&&location.hash.slice(1)!==id)history.pushState(null,'','#'+id);
 }
-function showHome(){activeProjectId=null;detail.classList.add('hidden');home.classList.remove('hidden');history.replaceState(null,'',location.pathname);window.scrollTo(0,0);}
+function showHome(push=true){activeProjectId=null;detail.classList.add('hidden');home.classList.remove('hidden');if(push&&location.hash)history.pushState(null,'',location.pathname+location.search);window.scrollTo(0,0);}
+function route(){
+ const id=decodeURIComponent(location.hash.slice(1));
+ if(projects.some(p=>p.id===id))return openProject(id,false);
+ showHome(false);
+ if(id==='about')document.getElementById('about').scrollIntoView();
+}
+window.addEventListener('popstate',route);
 function openProjectDialog(){if(!isAdmin)return;document.getElementById('projectForm').reset();document.getElementById('projectDialog').showModal();document.getElementById('newProjectTitle').focus();}
 function closeProjectDialog(){document.getElementById('projectDialog').close();}
 async function createProject(event){
@@ -273,6 +275,9 @@ async function createProject(event){
  catch(error){alert('프로젝트를 저장하지 못했습니다: '+error.message);}
 }
 function setupAdmin(){
+ // The MANAGE toggle only appears when the page is opened with ?manage.
+ if(!new URLSearchParams(location.search).has('manage'))return;
+ document.getElementById('modeToggle').classList.remove('hidden');
  document.getElementById('modeToggle').addEventListener('click',()=>{isAdmin=!isAdmin;updateAdminUI();});
  document.getElementById('addProjectButton').addEventListener('click',openProjectDialog);
  document.getElementById('projectForm').addEventListener('submit',createProject);
@@ -281,7 +286,7 @@ function setupAdmin(){
 }
 async function init(){
  setupAdmin();await loadProjects();renderHome();
- const initial=location.hash.slice(1);if(projects.some(p=>p.id===initial))openProject(initial);
+ const initial=location.hash.slice(1);if(projects.some(p=>p.id===initial))openProject(initial,false);
 }
 init();
 </script>
