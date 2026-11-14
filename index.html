@@ -69,7 +69,8 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 </dialog>
 <footer class="footer"><span>© 2026 KIM WOO HYEOK</span><span>ARCHITECTURE PORTFOLIO · VOL. 01</span><a href="mailto:tony3187@naver.com">tony3187@naver.com</a></footer>
 <script>
-const BUILT_IN_PROJECTS = [{"id": "on-the-loops", "title": "ON THE LOOPS", "subtitle": "Car-friendly culture space for drivers", "ko": "대청호 자동차문화공간 프로젝트", "type": "Graduation Project", "year": "2024", "pages": [], "cover": null, "role": "Personal Work", "location": "Hoenam-myeon, Boeun-gun, Korea", "program": "Museum, Motel, F&B, Garage, Community"}, {"id": "square-rande-vous", "title": "SQUARE-RANDE VOUS", "subtitle": "주거 속 광장들의 만남", "ko": "캠퍼스 공동주택 프로젝트", "type": "3-2 Academic Project", "year": "2022", "pages": [], "cover": null, "role": "Personal Work", "location": "Gung-dong, Yuseong-gu, Daejeon, Korea", "program": "Housing"}, {"id": "canyon-park", "title": "CANYON PARK", "subtitle": "도심 속 휴식처이자 브랜드 체험공간", "ko": "플래그십 몰을 이용한 어반아트리움 복합개발 프로젝트", "type": "4-1 Academic Project", "year": "2023", "pages": [], "cover": null, "role": "Team Work · 2인", "location": "Nasung-dong, Sejong, Korea", "program": "Mixed-use Development"}, {"id": "memories", "title": "추억은 방울방울", "subtitle": "추억을 기록하고 전시하다", "ko": "파빌리온 프로젝트", "type": "Competition Project", "year": "2023", "pages": [], "cover": null, "role": "Team Work · 4인", "location": "Culture Factory Central Square, Chungju, Korea", "program": "Pavilion"}, {"id": "water-melon-house", "title": "WATER MELON HOUSE", "subtitle": "세종시 해밀동 D-29 단독주택 프로젝트", "ko": "", "type": "Office Work", "year": "2025", "pages": [], "cover": null, "role": "Office Work", "location": "Haemil-dong, Sejong, Korea", "program": "Detached House"}, {"id": "guro-officetel", "title": "구로동 오피스텔 인테리어", "subtitle": "Interior Design Project", "ko": "", "type": "Office Work", "year": "2025", "pages": [], "cover": null, "role": "Office Work", "location": "Guro-dong, Seoul, Korea", "program": "Interior Design"}];
+// Projects are stored as asset/{project-id}/project.json in the repository.
+const BUILT_IN_PROJECTS = [];
 let projects = [...BUILT_IN_PROJECTS];
 let isAdmin = false;
 let activeProjectId = null;
@@ -81,6 +82,7 @@ const GITHUB_ASSET_TREE_URL='https://api.github.com/repos/WooHyeok98/WooHyeok98.
 const GITHUB_RAW_BASE='https://raw.githubusercontent.com/WooHyeok98/WooHyeok98.github.io/main/';
 const IMAGE_EXTENSIONS=['.avif','.gif','.jpg','.jpeg','.png','.webp'];
 const GITHUB_CONTENTS_URL='https://api.github.com/repos/WooHyeok98/WooHyeok98.github.io/contents/';
+const GITHUB_GIT_URL='https://api.github.com/repos/WooHyeok98/WooHyeok98.github.io/git/';
 const GITHUB_BRANCH='main';
 const GITHUB_TOKEN_KEY='kim-woo-hyeok-portfolio-github-token';
 const PROJECT_META_FILE='project.json';
@@ -183,10 +185,26 @@ function saveProjectToGitHub(project){
  const meta={title:project.title,subtitle:project.subtitle,ko:project.ko,type:project.type,year:project.year,role:project.role,location:project.location,program:project.program,createdAt:Date.now()};
  return githubContents('PUT','asset/'+project.id+'/'+PROJECT_META_FILE,{message:'Add project '+project.title+' [skip ci]',content:encodeBase64Text(JSON.stringify(meta,null,1)+'\n')});
 }
+async function githubGit(method,path,body){
+ const token=getGitHubToken();
+ if(!token)throw new Error('GitHub 토큰이 없습니다.');
+ const response=await fetch(GITHUB_GIT_URL+path,{method,cache:'no-store',headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},body:body?JSON.stringify(body):undefined});
+ if(response.status===401){clearGitHubToken();throw new Error('GitHub 토큰이 올바르지 않습니다. 다시 시도하면 토큰을 새로 입력할 수 있습니다.');}
+ if(response.status===403||response.status===404)throw new Error('GitHub 토큰에 이 저장소의 쓰기 권한이 없습니다.');
+ if(!response.ok)throw new Error('GitHub 삭제 실패 ('+response.status+')');
+ return response.json();
+}
+// Removes every file under asset/{project-id}/ in a single commit, which also removes the folder.
 async function deleteProjectFromGitHub(project){
- const path='asset/'+project.id+'/'+PROJECT_META_FILE;
- const current=await githubContents('GET',path);
- await githubContents('DELETE',path,{message:'Delete project '+project.title+' [skip ci]',sha:current.sha});
+ const prefix='asset/'+project.id+'/';
+ const ref=await githubGit('GET','ref/heads/'+GITHUB_BRANCH);
+ const head=await githubGit('GET','commits/'+ref.object.sha);
+ const tree=await githubGit('GET','trees/'+head.tree.sha+'?recursive=1');
+ const removals=(tree.tree||[]).filter(item=>item.type==='blob'&&item.path.startsWith(prefix)).map(item=>({path:item.path,mode:item.mode,type:'blob',sha:null}));
+ if(!removals.length)return;
+ const nextTree=await githubGit('POST','trees',{base_tree:head.tree.sha,tree:removals});
+ const commit=await githubGit('POST','commits',{message:'Delete project '+project.title+' [skip ci]',tree:nextTree.sha,parents:[ref.object.sha]});
+ await githubGit('PATCH','refs/heads/'+GITHUB_BRANCH,{sha:commit.sha});
 }
 // Commits are sequential: parallel writes to one branch conflict.
 async function uploadImagesToGitHub(project,files,onProgress){
@@ -329,7 +347,7 @@ function setupProjectUploads(p){
  if(deleteButton)deleteButton.addEventListener('click',()=>deleteCurrentProject(p));
 }
 async function deleteCurrentProject(p){
- if(!isAdmin||!confirm(`“${p.title}” 프로젝트와 업로드한 이미지를 모두 삭제할까요?`))return;
+ if(!isAdmin||!confirm(p.github?`“${p.title}” 프로젝트를 삭제할까요?\nGitHub의 asset/${p.id}/ 폴더와 그 안의 이미지가 모두 지워집니다.`:`“${p.title}” 프로젝트와 업로드한 이미지를 모두 삭제할까요?`))return;
  try{
   const records=await getProjectUploads(p.id);
   await openImageDB().then(db=>new Promise((resolve,reject)=>{
