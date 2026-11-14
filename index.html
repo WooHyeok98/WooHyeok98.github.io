@@ -147,13 +147,15 @@ function requestGitHubToken(){
  if(token){try{localStorage.setItem(GITHUB_TOKEN_KEY,token);}catch(error){}}
  return token;
 }
-async function githubContents(method,path,body){
+async function githubContents(method,path,body,attempt=0){
  const token=getGitHubToken();
  if(!token)throw new Error('GitHub 토큰이 없습니다.');
  const url=GITHUB_CONTENTS_URL+path.split('/').map(encodeURIComponent).join('/')+(method==='GET'?'?ref='+GITHUB_BRANCH:'');
  const response=await fetch(url,{method,cache:'no-store',headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},body:body?JSON.stringify({branch:GITHUB_BRANCH,...body}):undefined});
  if(response.status===401){clearGitHubToken();throw new Error('GitHub 토큰이 올바르지 않습니다. 다시 시도하면 토큰을 새로 입력할 수 있습니다.');}
  if(response.status===403||response.status===404){throw new Error('GitHub 토큰에 이 저장소의 쓰기 권한이 없습니다.');}
+ // 409: the branch moved while this commit was being written. Wait and retry.
+ if(response.status===409&&attempt<3){await new Promise(resolve=>setTimeout(resolve,1200*(attempt+1)));return githubContents(method,path,body,attempt+1);}
  if(response.status===422)throw new Error('같은 이름의 파일이 이미 있습니다: '+path);
  if(!response.ok)throw new Error('GitHub 저장 실패 ('+response.status+')');
  return response.json();
@@ -361,9 +363,14 @@ function route(){
 window.addEventListener('popstate',route);
 function openProjectDialog(){if(!isAdmin)return;document.getElementById('projectForm').reset();document.getElementById('projectDialog').showModal();document.getElementById('newProjectTitle').focus();}
 function closeProjectDialog(){document.getElementById('projectDialog').close();}
+let creatingProject=false;
 async function createProject(event){
- event.preventDefault();if(!isAdmin)return;
- const form=event.currentTarget,data=new FormData(form),title=String(data.get('title')||'').trim();if(!title)return;
+ event.preventDefault();if(!isAdmin||creatingProject)return;
+ creatingProject=true;
+ try{await submitProjectForm(event.currentTarget);}finally{creatingProject=false;}
+}
+async function submitProjectForm(form){
+ const data=new FormData(form),title=String(data.get('title')||'').trim();if(!title)return;
  await loadGitHubAssets();
  const project={id:makeProjectSlug(title),title,subtitle:String(data.get('subtitle')||'').trim(),ko:'',type:String(data.get('type')||'Personal Work').trim(),year:String(data.get('year')||new Date().getFullYear()).trim(),pages:[],cover:null,role:'Personal Work',location:String(data.get('location')||'').trim(),program:String(data.get('program')||'').trim(),custom:true};
  try{
