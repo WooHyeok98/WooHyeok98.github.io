@@ -8,5 +8,13 @@
  "location": "Gung-dong, Yuseong-gu, Daejeon, Korea",
  "program": "Housing",
  "order": 2,
- "createdAt": 2
+ "createdAt": 2,
+ "images": [
+  "17-page.webp",
+  "18-page.webp",
+  "19-page.webp",
+  "20-page.webp",
+  "21-page.webp",
+  "22-page.webp"
+ ]
 }

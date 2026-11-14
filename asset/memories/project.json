@@ -8,5 +8,9 @@
  "location": "Culture Factory Central Square, Chungju, Korea",
  "program": "Pavilion",
  "order": 4,
- "createdAt": 4
+ "createdAt": 4,
+ "images": [
+  "23-page.webp",
+  "24-page.webp"
+ ]
 }

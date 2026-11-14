@@ -36,6 +36,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 .project-dialog{width:min(520px,calc(100vw - 32px));max-width:none;border:1px solid var(--line);padding:28px;background:var(--paper);color:var(--ink);box-shadow:0 18px 60px rgba(0,0,0,.16)}.project-dialog::backdrop{background:rgba(20,20,20,.38);backdrop-filter:blur(3px)}.project-dialog form{display:flex;flex-direction:column;gap:14px}.dialog-head{display:flex;justify-content:space-between;align-items:center}.dialog-head .eyebrow{margin:0}.dialog-close{font-size:25px;line-height:1;color:#888;padding:0 4px}.project-dialog h2{font-size:30px;font-weight:400;letter-spacing:-.05em;margin:0 0 6px}.project-dialog label{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:.1em;color:#777;text-transform:uppercase}.project-dialog input,.project-dialog select{width:100%;border:1px solid var(--line);background:#fff;padding:11px 12px;font:14px Arial,sans-serif;color:#222;outline:none}.project-dialog input:focus,.project-dialog select:focus{border-color:#777}.dialog-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:8px}.dialog-actions button{padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #aaa}.dialog-submit{background:#181818!important;color:#fff;border-color:#181818!important}.dialog-cancel:hover,.dialog-close:hover{color:#111;border-color:#555}
 .type-head{margin:0 var(--gutter);padding:26px 0 16px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.15em;color:#777;text-transform:uppercase}.type-head strong{font-weight:600;color:var(--ink)}.type-hint{letter-spacing:.04em;text-transform:none;color:#999}
 .project-groups .project-grid{padding-bottom:70px}.project-groups .project-grid:last-child{padding-bottom:110px}
+.uploaded-frame[draggable="true"]{cursor:grab}.uploaded-frame.dragging{opacity:.35}.uploaded-frame.drop-target{outline:2px solid var(--ink);outline-offset:4px}
 .project-card[draggable="true"]{cursor:grab}.project-card.dragging{opacity:.35}.project-card.drop-target .cover{outline:2px solid var(--ink);outline-offset:4px}
 .empty-project{font-size:12px;color:#999;letter-spacing:.04em;padding:16px 0;border-bottom:1px solid var(--line)}
 .project-delete{border:1px solid #b8b8b3;color:#777;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}.project-delete:hover{border-color:#222;color:#111}
@@ -134,7 +135,14 @@ function loadGitHubAssets(){
 }
 async function getGitHubProjectAssets(projectId){
  await loadGitHubAssets();
- return githubAssetMap.get(projectId)||[];
+ return orderProjectAssets(projects.find(project=>project.id===projectId),githubAssetMap.get(projectId)||[]);
+}
+// project.json "images" lists file names in display order; files not listed follow in file-name order.
+function orderProjectAssets(project,items){
+ const names=project&&Array.isArray(project.images)?project.images:[];
+ if(!names.length)return items;
+ const rank=item=>{const index=names.indexOf(item.name);return index<0?Infinity:index;};
+ return items.map((item,index)=>({item,index})).sort((a,b)=>(rank(a.item)-rank(b.item))||(a.index-b.index)).map(entry=>entry.item);
 }
 // Projects added from the admin menu live in asset/{project-id}/project.json.
 async function loadGitHubProjects(){
@@ -147,7 +155,7 @@ async function loadGitHubProjects(){
    const meta=await response.json();
    if(!meta||typeof meta.title!=='string'||!meta.title.trim())return null;
    const text=key=>typeof meta[key]==='string'?meta[key]:'';
-   return {id,title:meta.title.trim(),subtitle:text('subtitle'),ko:text('ko'),type:normalizeType(meta.type),order:Number(meta.order)||0,year:text('year'),role:text('role')||'Personal Work',location:text('location'),program:text('program'),createdAt:Number(meta.createdAt)||0,pages:[],cover:null,custom:true,github:true};
+   return {id,title:meta.title.trim(),subtitle:text('subtitle'),ko:text('ko'),type:normalizeType(meta.type),order:Number(meta.order)||0,images:Array.isArray(meta.images)?meta.images.filter(name=>typeof name==='string'):[],year:text('year'),role:text('role')||'Personal Work',location:text('location'),program:text('program'),createdAt:Number(meta.createdAt)||0,pages:[],cover:null,custom:true,github:true};
   }catch(error){console.warn(error);return null;}
  }));
  const added=loaded.filter(Boolean);
@@ -197,6 +205,7 @@ function makeProjectSlug(title){
 }
 function projectMetaJSON(project){
  const meta={title:project.title,subtitle:project.subtitle,ko:project.ko,type:project.type,year:project.year,role:project.role,location:project.location,program:project.program,order:project.order,createdAt:project.createdAt};
+ if(Array.isArray(project.images)&&project.images.length)meta.images=project.images;
  return JSON.stringify(meta,null,1)+'\n';
 }
 function saveProjectToGitHub(project){
@@ -338,12 +347,13 @@ async function renderUploadedImages(p){
  const container=document.getElementById('uploadedGallery');if(!container)return;
  try{
   const [shared,records]=await Promise.all([getGitHubProjectAssets(p.id),getProjectUploads(p.id)]);
-  const sharedMarkup=shared.map(item=>`<figure class="page-frame uploaded-frame"><img src="${item.url}" alt="${escapeHTML(p.title)} — ${escapeHTML(item.name)}" loading="lazy"><figcaption class="uploaded-caption"><span>GITHUB ASSET · ${escapeHTML(item.name)}</span>${isAdmin?`<button class="remove-upload" type="button" data-asset-path="${escapeHTML(item.path)}">DELETE ×</button>`:''}</figcaption></figure>`).join('');
+  const sharedMarkup=shared.map(item=>`<figure class="page-frame uploaded-frame" data-asset-name="${escapeHTML(item.name)}" draggable="${isAdmin&&!!p.github}"><img src="${item.url}" alt="${escapeHTML(p.title)} — ${escapeHTML(item.name)}" loading="lazy" draggable="false"><figcaption class="uploaded-caption"><span>GITHUB ASSET · ${escapeHTML(item.name)}</span>${isAdmin?`<button class="remove-upload" type="button" data-asset-path="${escapeHTML(item.path)}">DELETE ×</button>`:''}</figcaption></figure>`).join('');
   const localMarkup=records.map(record=>`<figure class="page-frame uploaded-frame">
    <img src="${URL.createObjectURL(record.blob)}" alt="${escapeHTML(record.name)}">
    ${isAdmin?`<figcaption class="uploaded-caption"><span>LOCAL IMAGE · ${escapeHTML(record.name)}</span><button class="remove-upload" type="button" data-upload-id="${record.id}">DELETE ×</button></figcaption>`:''}
   </figure>`).join('');
   container.innerHTML=sharedMarkup+localMarkup;
+  setupImageReorder(container,p,shared);
   if(!shared.length&&!records.length)container.innerHTML='<p class="empty-project">아직 등록된 프로젝트 이미지가 없습니다. GitHub의 asset 프로젝트 폴더에 이미지를 추가해 주세요.</p>';
   container.querySelectorAll('[data-upload-id]').forEach(button=>button.addEventListener('click',async()=>{
    if(!isAdmin||!confirm('이 브라우저에 저장된 이미지를 삭제할까요?'))return;
@@ -361,6 +371,44 @@ async function renderUploadedImages(p){
   }));
   await refreshProjectCardCover(p.id);
  }catch(error){container.innerHTML=`<p class="empty-project">이미지를 불러오지 못했습니다: ${escapeHTML(error.message)}</p>`;}
+}
+// Image reordering: drag a GitHub image onto another one (admin mode only). The order is saved to project.json.
+function setupImageReorder(container,p,shared){
+ if(!isAdmin||!p.github||shared.length<2)return;
+ let draggedName=null;
+ const frames=Array.from(container.querySelectorAll('[data-asset-name]'));
+ const clear=()=>frames.forEach(frame=>frame.classList.remove('drop-target'));
+ const target=event=>{const frame=event.target.closest('[data-asset-name]');return frame&&draggedName&&frame.dataset.assetName!==draggedName?frame:null;};
+ frames.forEach(frame=>{
+  frame.addEventListener('dragstart',event=>{draggedName=frame.dataset.assetName;frame.classList.add('dragging');event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',draggedName);});
+  frame.addEventListener('dragend',()=>{draggedName=null;clear();frames.forEach(item=>item.classList.remove('dragging'));});
+  frame.addEventListener('dragover',event=>{const over=target(event);clear();if(!over)return;event.preventDefault();event.dataTransfer.dropEffect='move';over.classList.add('drop-target');});
+  frame.addEventListener('drop',event=>{
+   const over=target(event);if(!over)return;
+   event.preventDefault();
+   const names=shared.map(item=>item.name),from=names.indexOf(draggedName),to=names.indexOf(over.dataset.assetName);
+   draggedName=null;
+   if(from<0||to<0)return;
+   names.splice(to,0,names.splice(from,1)[0]);
+   saveImageOrder(p,names);
+  });
+ });
+}
+function saveImageOrder(p,names){
+ const previous=p.images;
+ p.images=names;renderUploadedImages(p);
+ orderSaveQueue=orderSaveQueue.then(async()=>{
+  const status=document.getElementById('uploadStatus');
+  if(status)status.textContent='이미지 순서 저장 중…';
+  try{
+   if(!requestGitHubToken())throw new Error('GitHub 토큰이 없어 이 화면에서만 순서가 바뀌었습니다.');
+   await saveProjectMetaToGitHub([p],'Reorder images of '+p.title);
+   if(status)status.textContent='이미지 순서를 저장했습니다.';
+  }catch(error){
+   if(p.images===names){p.images=previous;renderUploadedImages(p);}
+   if(status)status.textContent='';alert('이미지 순서를 저장하지 못했습니다: '+error.message);
+  }
+ });
 }
 function setupProjectUploads(p){
  const trigger=document.getElementById('uploadTrigger'),input=document.getElementById('projectImageInput'),status=document.getElementById('uploadStatus');
@@ -408,7 +456,7 @@ function openProject(id,push=true){
  activeProjectId=id;home.classList.add('hidden');detail.classList.remove('hidden');
  detail.innerHTML=`<section class="detail-top"><div><a class="back" href="#" onclick="showHome();return false;">← Back to index</a><p class="eyebrow">${escapeHTML(p.role||'Personal Work')} · ${escapeHTML(p.type||'Project')}</p><h1 class="detail-title">${escapeHTML(p.title)}</h1><p class="detail-subtitle">${escapeHTML(p.subtitle||'')}${p.ko?' / '+escapeHTML(p.ko):''}</p></div>
  <div class="detail-meta"><div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">${escapeHTML(p.year||'')}</div></div><div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${escapeHTML(p.type||'')}</div></div><div class="meta-item"><div class="meta-label">Program</div><div class="meta-value">${escapeHTML(p.program||'')}</div></div><div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${escapeHTML(p.location||'')}</div></div></div></section>
- <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">GitHub 토큰을 입력하면 Add images가 GitHub asset/{프로젝트ID}/ 폴더에 바로 올라가 모든 방문자에게 표시됩니다. 토큰이 없으면 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="upload-button" id="editProjectButton" type="button">Edit project</button><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/</p></section>
+ <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">GitHub 토큰을 입력하면 Add images가 GitHub asset/{프로젝트ID}/ 폴더에 바로 올라가 모든 방문자에게 표시됩니다. 토큰이 없으면 현재 브라우저에만 저장됩니다. GitHub 이미지는 드래그해서 순서를 바꿀 수 있고, 첫 번째 이미지가 목록 썸네일이 됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="upload-button" id="editProjectButton" type="button">Edit project</button><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/</p></section>
  <section class="uploaded-gallery" id="uploadedGallery" aria-label="추가한 프로젝트 이미지"></section>
   <div class="detail-bottom"><button onclick="showHome()">← All projects</button><button onclick="openProject('${projects[(projects.indexOf(p)+1)%projects.length].id}')">Next project →</button></div>`;
  setupProjectUploads(p);renderUploadedImages(p);updateAdminUI();window.scrollTo(0,0);if(push&&location.hash.slice(1)!==id)history.pushState(null,'','#'+id);
