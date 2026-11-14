@@ -75,6 +75,44 @@ let isAdmin = false;
 let activeProjectId = null;
 const grid=document.getElementById('projectGrid'),home=document.getElementById('home'),detail=document.getElementById('detail');
 const img=n=>'assets/page-'+String(n).padStart(2,'0')+'.webp';
+
+// Public project images are discovered from GitHub's repository tree.
+// Add images to asset/{project-id}/ and they appear on that project's pages.
+const GITHUB_ASSET_TREE_URL='https://api.github.com/repos/WooHyeok98/WooHyeok98.github.io/git/trees/main?recursive=1';
+const GITHUB_RAW_BASE='https://raw.githubusercontent.com/WooHyeok98/WooHyeok98.github.io/main/';
+const IMAGE_FILE_PATTERN=/\\.(?:avif|gif|jpe?g|png|webp)$/i;
+let githubAssetMap=new Map();
+let githubAssetPromise=null;
+function loadGitHubAssets(){
+ if(!githubAssetPromise){
+  githubAssetPromise=fetch(GITHUB_ASSET_TREE_URL,{cache:'no-cache'})
+   .then(response=>{if(!response.ok)throw new Error('GitHub 이미지 목록을 불러오지 못했습니다.');return response.json();})
+   .then(data=>{
+    const next=new Map();
+    (data.tree||[]).forEach(item=>{
+     if(item.type!=='blob'||!item.path.startsWith('asset/')||!IMAGE_FILE_PATTERN.test(item.path))return;
+     const parts=item.path.split('/');
+     if(parts.length<3)return;
+     const projectId=parts[1];
+     if(!projectId)return;
+     if(!next.has(projectId))next.set(projectId,[]);
+     next.get(projectId).push({
+      name:parts.slice(2).join('/'),
+      url:GITHUB_RAW_BASE+item.path.split('/').map(encodeURIComponent).join('/')
+     });
+    });
+    next.forEach(items=>items.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'})));
+    githubAssetMap=next;
+    return githubAssetMap;
+   })
+   .catch(error=>{console.warn('공용 GitHub 이미지 목록:',error);githubAssetMap=new Map();return githubAssetMap;});
+ }
+ return githubAssetPromise;
+}
+async function getGitHubProjectAssets(projectId){
+ await loadGitHubAssets();
+ return githubAssetMap.get(projectId)||[];
+}
 let imageDbPromise;
 
 function openImageDB(){
@@ -143,10 +181,12 @@ function updateAdminUI(){
 }
 async function refreshProjectCardCover(projectId){
  try{
-  const records=await getProjectUploads(projectId),cover=document.querySelector(`[data-cover-for="${projectId}"]`);
+  const [shared,records]=await Promise.all([getGitHubProjectAssets(projectId),getProjectUploads(projectId)]);
+  const cover=document.querySelector(`[data-cover-for="${projectId}"]`);
   if(!cover)return;
-  if(records.length){cover.innerHTML=`<img src="${URL.createObjectURL(records[0].blob)}" alt="Project image" loading="lazy">`;return;}
   const project=projects.find(item=>item.id===projectId);
+  if(shared.length){cover.innerHTML=`<img src="${shared[0].url}" alt="${escapeHTML(project?.title||'Project')} project cover" loading="lazy">`;return;}
+  if(records.length){cover.innerHTML=`<img src="${URL.createObjectURL(records[0].blob)}" alt="Project image" loading="lazy">`;return;}
   if(project&&project.cover)cover.innerHTML=`<img src="${img(project.cover)}" alt="${escapeHTML(project.title)} project cover" loading="lazy">`;
   else cover.innerHTML='<span class="no-cover">PROJECT IMAGE</span>';
  }catch(error){console.warn(error);}
@@ -164,15 +204,18 @@ function renderHome(){
 async function renderUploadedImages(p){
  const container=document.getElementById('uploadedGallery');if(!container)return;
  try{
-  const records=await getProjectUploads(p.id),originalGallery=document.getElementById('originalGallery');
-  if(originalGallery)originalGallery.classList.toggle('hidden',records.length>0||!p.pages||p.pages.length===0);
-  container.innerHTML=records.map(record=>`<figure class="page-frame uploaded-frame">
+  const [shared,records]=await Promise.all([getGitHubProjectAssets(p.id),getProjectUploads(p.id)]);
+  const originalGallery=document.getElementById('originalGallery');
+  if(originalGallery)originalGallery.classList.toggle('hidden',shared.length>0||records.length>0||!p.pages||p.pages.length===0);
+  const sharedMarkup=shared.map(item=>`<figure class="page-frame uploaded-frame"><img src="${item.url}" alt="${escapeHTML(p.title)} — ${escapeHTML(item.name)}" loading="lazy"><figcaption class="uploaded-caption"><span>GITHUB ASSET · ${escapeHTML(item.name)}</span></figcaption></figure>`).join('');
+  const localMarkup=records.map(record=>`<figure class="page-frame uploaded-frame">
    <img src="${URL.createObjectURL(record.blob)}" alt="${escapeHTML(record.name)}">
-   ${isAdmin?`<figcaption class="uploaded-caption"><span>ADDED IMAGE · ${escapeHTML(record.name)}</span><button class="remove-upload" type="button" data-upload-id="${record.id}">DELETE ×</button></figcaption>`:''}
+   ${isAdmin?`<figcaption class="uploaded-caption"><span>LOCAL IMAGE · ${escapeHTML(record.name)}</span><button class="remove-upload" type="button" data-upload-id="${record.id}">DELETE ×</button></figcaption>`:''}
   </figure>`).join('');
-  if(!records.length&&(!p.pages||p.pages.length===0))container.innerHTML='<p class="empty-project">아직 등록된 프로젝트 이미지가 없습니다.</p>';
+  container.innerHTML=sharedMarkup+localMarkup;
+  if(!shared.length&&!records.length&&(!p.pages||p.pages.length===0))container.innerHTML='<p class="empty-project">아직 등록된 프로젝트 이미지가 없습니다. GitHub의 asset 프로젝트 폴더에 이미지를 추가해 주세요.</p>';
   container.querySelectorAll('[data-upload-id]').forEach(button=>button.addEventListener('click',async()=>{
-   if(!isAdmin||!confirm('이 이미지를 삭제할까요?'))return;
+   if(!isAdmin||!confirm('이 브라우저에 저장된 이미지를 삭제할까요?'))return;
    button.disabled=true;
    try{await deleteProjectUpload(button.dataset.uploadId);await renderUploadedImages(p);await refreshProjectCardCover(p.id);}
    catch(error){button.disabled=false;alert('이미지를 삭제하지 못했습니다: '+error.message);}
@@ -213,7 +256,7 @@ function openProject(id){
  activeProjectId=id;home.classList.add('hidden');detail.classList.remove('hidden');
  detail.innerHTML=`<section class="detail-top"><div><a class="back" href="#" onclick="showHome();return false;">← Back to index</a><p class="eyebrow">${escapeHTML(p.role||'Personal Work')} · ${escapeHTML(p.type||'Project')}</p><h1 class="detail-title">${escapeHTML(p.title)}</h1><p class="detail-subtitle">${escapeHTML(p.subtitle||'')}${p.ko?' / '+escapeHTML(p.ko):''}</p></div>
  <div class="detail-meta"><div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">${escapeHTML(p.year||'')}</div></div><div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${escapeHTML(p.type||'')}</div></div><div class="meta-item"><div class="meta-label">Program</div><div class="meta-value">${escapeHTML(p.program||'')}</div></div><div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${escapeHTML(p.location||'')}</div></div></div></section>
- <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">이 프로젝트의 상세 이미지를 추가하거나 관리할 수 있습니다. 여러 장을 한 번에 선택할 수 있습니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">업로드한 이미지는 현재 브라우저에 저장됩니다.</p></section>
+ <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">공용 이미지는 GitHub asset/{프로젝트ID}/ 폴더에 올리면 모든 방문자에게 표시됩니다. 아래 Add images는 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/ · 브라우저 업로드는 이 기기에만 저장됩니다.</p></section>
  <section class="uploaded-gallery" id="uploadedGallery" aria-label="추가한 프로젝트 이미지"></section>
  <section class="detail-gallery" id="originalGallery">${(p.pages||[]).map((n,i)=>`<figure class="page-frame"><img src="${img(n)}" alt="${escapeHTML(p.title)} — portfolio page ${i+1}" loading="${i===0?'eager':'lazy'}"></figure>`).join('')}</section>
  <div class="detail-bottom"><button onclick="showHome()">← All projects</button><button onclick="openProject('${projects[(projects.indexOf(p)+1)%projects.length].id}')">Next project →</button></div>`;
