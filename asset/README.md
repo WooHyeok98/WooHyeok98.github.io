@@ -42,4 +42,5 @@
 2. **+ Add project**로 프로젝트를 만들면 GitHub 토큰을 묻습니다. 이 저장소의 **Contents: Read and write** 권한만 준 fine-grained Personal Access Token을 입력합니다. 토큰은 그 브라우저에만 저장됩니다.
 3. 프로젝트는 `asset/{프로젝트ID}/project.json` 파일로 저장되고, 모든 방문자의 목록에 나타납니다.
 4. 프로젝트 상세페이지의 **+ Add images**로 올린 이미지는 `asset/{프로젝트ID}/` 폴더에 커밋됩니다.
-5. **Delete project**는 `asset/{프로젝트ID}/` 폴더를 이미지까지 통째로 지웁니다. 되돌리려면 Git 기록에서 복구해야 합니다.
+5. 상세페이지의 **Edit project**로 제목, 타입 등 프로젝트 정보를 고치고, 각 이미지 아래 **DELETE ×**로 이미지를 한 장씩 지울 수 있습니다.
+6. **Delete project**는 `asset/{프로젝트ID}/` 폴더를 이미지까지 통째로 지웁니다. 되돌리려면 Git 기록에서 복구해야 합니다.

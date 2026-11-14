@@ -25,7 +25,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 .detail-top{padding:70px var(--gutter) 36px;display:grid;grid-template-columns:1.4fr .6fr;gap:5vw;align-items:end}.back{font-size:11px;letter-spacing:.13em;color:#777;text-transform:uppercase;display:inline-block;margin-bottom:45px}.back:hover{color:#111}
 .detail-title{font-size:clamp(38px,7vw,100px);line-height:.9;letter-spacing:-.075em;font-weight:400;margin:0 0 14px}.detail-subtitle{font-size:15px;color:#666;margin:0;line-height:1.5}
 .detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;padding-bottom:4px}.meta-item{border-top:1px solid var(--line);padding-top:8px}.meta-label{font-size:10px;letter-spacing:.14em;color:#999;text-transform:uppercase;margin-bottom:7px}.meta-value{font-size:12px;line-height:1.5;color:#444}
-.upload-tools{margin:8px var(--gutter) 26px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:10px 24px;align-items:center}.upload-title{font-size:11px;letter-spacing:.15em;color:#555;margin:0 0 7px}.upload-note{font-size:12px;line-height:1.6;color:#888;margin:0}.upload-actions{display:flex;align-items:center;gap:10px}.upload-button{border:1px solid #aaa;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:background .2s,border-color .2s}.upload-button:hover{background:#181818;color:#fff;border-color:#181818}.upload-status{grid-column:1/-1;font-size:11px;color:#888;margin:0;line-height:1.6}.uploaded-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.uploaded-gallery:empty{display:none}.page-frame{width:100%;background:#fff;line-height:0;margin:0}.page-frame img{width:100%;height:auto;display:block}.uploaded-frame{position:relative}.uploaded-frame img{max-height:none}.uploaded-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0 0;font-size:11px;line-height:1.4;letter-spacing:.06em;color:#888}.remove-upload{font-size:11px;letter-spacing:.08em;color:#999;text-transform:uppercase;border:1px solid var(--line);padding:6px 9px;white-space:nowrap}.remove-upload:hover{color:#111;border-color:#777}.detail-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.detail-bottom{border-top:1px solid var(--line);padding:24px var(--gutter) 60px;display:flex;justify-content:space-between;align-items:center}.detail-bottom button{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#777}.detail-bottom button:hover{color:#111}
+.upload-tools{margin:8px var(--gutter) 26px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:10px 24px;align-items:center}.upload-title{font-size:11px;letter-spacing:.15em;color:#555;margin:0 0 7px}.upload-note{font-size:12px;line-height:1.6;color:#888;margin:0}.upload-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px}.upload-button{border:1px solid #aaa;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:background .2s,border-color .2s}.upload-button:hover{background:#181818;color:#fff;border-color:#181818}.upload-status{grid-column:1/-1;font-size:11px;color:#888;margin:0;line-height:1.6}.uploaded-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.uploaded-gallery:empty{display:none}.page-frame{width:100%;background:#fff;line-height:0;margin:0}.page-frame img{width:100%;height:auto;display:block}.uploaded-frame{position:relative}.uploaded-frame img{max-height:none}.uploaded-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0 0;font-size:11px;line-height:1.4;letter-spacing:.06em;color:#888}.remove-upload{font-size:11px;letter-spacing:.08em;color:#999;text-transform:uppercase;border:1px solid var(--line);padding:6px 9px;white-space:nowrap}.remove-upload:hover{color:#111;border-color:#777}.detail-gallery{padding:0 var(--gutter) 100px;display:flex;flex-direction:column;gap:18px}.detail-bottom{border-top:1px solid var(--line);padding:24px var(--gutter) 60px;display:flex;justify-content:space-between;align-items:center}.detail-bottom button{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#777}.detail-bottom button:hover{color:#111}
 .hidden{display:none!important}
 @media(max-width:700px){.topbar{height:58px}.topnav{gap:14px;font-size:11px}.hero{grid-template-columns:1fr;padding-top:76px;padding-bottom:58px;gap:40px}.hero h1{font-size:clamp(58px,16vw,110px)}.hero-right{gap:14px}.project-grid{grid-template-columns:1fr;row-gap:42px;padding-top:20px}.cover{aspect-ratio:1.28/1}.about{grid-template-columns:1fr;gap:24px;padding-top:42px;padding-bottom:65px}.detail-top{grid-template-columns:1fr;padding-top:45px;gap:36px}.back{margin-bottom:36px}.detail-meta{grid-template-columns:1fr 1fr}.detail-gallery{gap:9px;padding-top:8px}.footer{gap:15px;flex-wrap:wrap}.detail-bottom{padding-bottom:40px}}
 @media(min-width:1100px){.project-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:82px}.cover{aspect-ratio:1.58/1}.detail-gallery{max-width:1500px;margin:auto}}
@@ -60,14 +60,16 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 <main id="detail" class="hidden"></main>
 <dialog class="project-dialog" id="projectDialog" aria-labelledby="projectDialogTitle">
  <form id="projectForm" method="dialog">
-  <div class="dialog-head"><p class="eyebrow">NEW PROJECT</p><button class="dialog-close" type="button" id="closeProjectDialog" aria-label="닫기">×</button></div>
+  <div class="dialog-head"><p class="eyebrow" id="projectDialogEyebrow">NEW PROJECT</p><button class="dialog-close" type="button" id="closeProjectDialog" aria-label="닫기">×</button></div>
   <h2 id="projectDialogTitle">Add a project</h2>
   <label>Project title<input name="title" id="newProjectTitle" required maxlength="90" placeholder="Project name"></label>
   <label>Subtitle<input name="subtitle" maxlength="140" placeholder="Project description"></label>
+  <label>Korean subtitle<input name="ko" maxlength="140" placeholder="한글 설명 (선택)"></label>
   <div class="dialog-row"><label>Year<input name="year" maxlength="12" placeholder="2026"></label><label>Type<select name="type" required><option value="ACADEMIC">ACADEMIC</option><option value="OFFICE">OFFICE</option></select></label></div>
   <label>Location<input name="location" maxlength="120" placeholder="City, Country"></label>
   <label>Program<input name="program" maxlength="120" placeholder="Housing, Culture, etc."></label>
-  <div class="dialog-actions"><button class="dialog-cancel" type="button" id="cancelProjectButton">Cancel</button><button class="dialog-submit" type="submit">Create project</button></div>
+  <label>Role<input name="role" maxlength="70" placeholder="Personal Work, Team Work · 2인"></label>
+  <div class="dialog-actions"><button class="dialog-cancel" type="button" id="cancelProjectButton">Cancel</button><button class="dialog-submit" id="projectDialogSubmit" type="submit">Create project</button></div>
  </form>
 </dialog>
 <footer class="footer"><span>© 2026 KIM WOO HYEOK</span><span>ARCHITECTURE PORTFOLIO · VOL. 01</span><a href="mailto:tony3187@naver.com">tony3187@naver.com</a></footer>
@@ -118,7 +120,7 @@ function loadGitHubAssets(){
      if(!projectId)return;
      if(!next.has(projectId))next.set(projectId,[]);
      next.get(projectId).push({
-      name:parts.slice(2).join('/'),
+      name:parts.slice(2).join('/'),path:item.path,sha:item.sha,
       url:GITHUB_RAW_BASE+item.path.split('/').map(encodeURIComponent).join('/')
      });
     });
@@ -200,13 +202,13 @@ function projectMetaJSON(project){
 function saveProjectToGitHub(project){
  return githubContents('PUT','asset/'+project.id+'/'+PROJECT_META_FILE,{message:'Add project '+project.title+' [skip ci]',content:encodeBase64Text(projectMetaJSON(project))});
 }
-// Writes the new order of several projects in a single commit.
-async function saveProjectOrderToGitHub(changed,type){
+// Writes the project.json of several projects in a single commit.
+async function saveProjectMetaToGitHub(changed,message){
  const ref=await githubGit('GET','ref/heads/'+GITHUB_BRANCH);
  const head=await githubGit('GET','commits/'+ref.object.sha);
  const entries=changed.map(project=>({path:'asset/'+project.id+'/'+PROJECT_META_FILE,mode:'100644',type:'blob',content:projectMetaJSON(project)}));
  const nextTree=await githubGit('POST','trees',{base_tree:head.tree.sha,tree:entries});
- const commit=await githubGit('POST','commits',{message:'Reorder '+type+' projects [skip ci]',tree:nextTree.sha,parents:[ref.object.sha]});
+ const commit=await githubGit('POST','commits',{message:message+' [skip ci]',tree:nextTree.sha,parents:[ref.object.sha]});
  await githubGit('PATCH','refs/heads/'+GITHUB_BRANCH,{sha:commit.sha});
 }
 async function githubGit(method,path,body){
@@ -336,7 +338,7 @@ async function renderUploadedImages(p){
  const container=document.getElementById('uploadedGallery');if(!container)return;
  try{
   const [shared,records]=await Promise.all([getGitHubProjectAssets(p.id),getProjectUploads(p.id)]);
-  const sharedMarkup=shared.map(item=>`<figure class="page-frame uploaded-frame"><img src="${item.url}" alt="${escapeHTML(p.title)} — ${escapeHTML(item.name)}" loading="lazy"><figcaption class="uploaded-caption"><span>GITHUB ASSET · ${escapeHTML(item.name)}</span></figcaption></figure>`).join('');
+  const sharedMarkup=shared.map(item=>`<figure class="page-frame uploaded-frame"><img src="${item.url}" alt="${escapeHTML(p.title)} — ${escapeHTML(item.name)}" loading="lazy"><figcaption class="uploaded-caption"><span>GITHUB ASSET · ${escapeHTML(item.name)}</span>${isAdmin?`<button class="remove-upload" type="button" data-asset-path="${escapeHTML(item.path)}">DELETE ×</button>`:''}</figcaption></figure>`).join('');
   const localMarkup=records.map(record=>`<figure class="page-frame uploaded-frame">
    <img src="${URL.createObjectURL(record.blob)}" alt="${escapeHTML(record.name)}">
    ${isAdmin?`<figcaption class="uploaded-caption"><span>LOCAL IMAGE · ${escapeHTML(record.name)}</span><button class="remove-upload" type="button" data-upload-id="${record.id}">DELETE ×</button></figcaption>`:''}
@@ -347,6 +349,14 @@ async function renderUploadedImages(p){
    if(!isAdmin||!confirm('이 브라우저에 저장된 이미지를 삭제할까요?'))return;
    button.disabled=true;
    try{await deleteProjectUpload(button.dataset.uploadId);await renderUploadedImages(p);await refreshProjectCardCover(p.id);}
+   catch(error){button.disabled=false;alert('이미지를 삭제하지 못했습니다: '+error.message);}
+  }));
+  container.querySelectorAll('[data-asset-path]').forEach(button=>button.addEventListener('click',async()=>{
+   const asset=shared.find(item=>item.path===button.dataset.assetPath);
+   if(!isAdmin||!asset||!confirm(`GitHub에서 “${asset.name}” 이미지를 삭제할까요?\n모든 방문자에게서 사라집니다.`))return;
+   if(!requestGitHubToken()){alert('GitHub 이미지는 토큰이 있어야 삭제할 수 있습니다.');return;}
+   button.disabled=true;
+   try{await githubContents('DELETE',asset.path,{message:'Remove '+asset.name+' from '+p.title+' [skip ci]',sha:asset.sha});githubAssetPromise=null;await renderUploadedImages(p);}
    catch(error){button.disabled=false;alert('이미지를 삭제하지 못했습니다: '+error.message);}
   }));
   await refreshProjectCardCover(p.id);
@@ -373,6 +383,8 @@ function setupProjectUploads(p){
   catch(error){githubAssetPromise=null;await renderUploadedImages(p);status.textContent='저장하지 못했습니다: '+error.message;}
   finally{trigger.disabled=false;input.value='';}
  });
+ const editButton=document.getElementById('editProjectButton');
+ if(editButton)editButton.addEventListener('click',()=>openProjectDialog(p));
  const deleteButton=document.getElementById('deleteProjectButton');
  if(deleteButton)deleteButton.addEventListener('click',()=>deleteCurrentProject(p));
 }
@@ -396,7 +408,7 @@ function openProject(id,push=true){
  activeProjectId=id;home.classList.add('hidden');detail.classList.remove('hidden');
  detail.innerHTML=`<section class="detail-top"><div><a class="back" href="#" onclick="showHome();return false;">← Back to index</a><p class="eyebrow">${escapeHTML(p.role||'Personal Work')} · ${escapeHTML(p.type||'Project')}</p><h1 class="detail-title">${escapeHTML(p.title)}</h1><p class="detail-subtitle">${escapeHTML(p.subtitle||'')}${p.ko?' / '+escapeHTML(p.ko):''}</p></div>
  <div class="detail-meta"><div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">${escapeHTML(p.year||'')}</div></div><div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${escapeHTML(p.type||'')}</div></div><div class="meta-item"><div class="meta-label">Program</div><div class="meta-value">${escapeHTML(p.program||'')}</div></div><div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${escapeHTML(p.location||'')}</div></div></div></section>
- <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">GitHub 토큰을 입력하면 Add images가 GitHub asset/{프로젝트ID}/ 폴더에 바로 올라가 모든 방문자에게 표시됩니다. 토큰이 없으면 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/</p></section>
+ <section class="upload-tools admin-only ${isAdmin?'':'hidden'}"><div><p class="upload-title">PROJECT IMAGE ARCHIVE</p><p class="upload-note">GitHub 토큰을 입력하면 Add images가 GitHub asset/{프로젝트ID}/ 폴더에 바로 올라가 모든 방문자에게 표시됩니다. 토큰이 없으면 현재 브라우저에만 저장됩니다.</p></div><div class="upload-actions"><button class="upload-button" id="uploadTrigger" type="button">+ Add images</button><input id="projectImageInput" type="file" accept="image/*" multiple hidden><button class="upload-button" id="editProjectButton" type="button">Edit project</button><button class="project-delete" id="deleteProjectButton" type="button">Delete project</button></div><p class="upload-status" id="uploadStatus" aria-live="polite">공용 이미지 경로: asset/${p.id}/</p></section>
  <section class="uploaded-gallery" id="uploadedGallery" aria-label="추가한 프로젝트 이미지"></section>
   <div class="detail-bottom"><button onclick="showHome()">← All projects</button><button onclick="openProject('${projects[(projects.indexOf(p)+1)%projects.length].id}')">Next project →</button></div>`;
  setupProjectUploads(p);renderUploadedImages(p);updateAdminUI();window.scrollTo(0,0);if(push&&location.hash.slice(1)!==id)history.pushState(null,'','#'+id);
@@ -409,7 +421,17 @@ function route(){
  if(id==='about')document.getElementById('about').scrollIntoView();
 }
 window.addEventListener('popstate',route);
-function openProjectDialog(){if(!isAdmin)return;document.getElementById('projectForm').reset();document.getElementById('projectDialog').showModal();document.getElementById('newProjectTitle').focus();}
+let editingProject=null;
+function openProjectDialog(project){
+ if(!isAdmin)return;
+ const form=document.getElementById('projectForm');
+ form.reset();editingProject=project||null;
+ if(editingProject)['title','subtitle','ko','year','type','location','program','role'].forEach(name=>{form.elements[name].value=editingProject[name]||'';});
+ document.getElementById('projectDialogEyebrow').textContent=editingProject?'EDIT PROJECT':'NEW PROJECT';
+ document.getElementById('projectDialogTitle').textContent=editingProject?'Edit project':'Add a project';
+ document.getElementById('projectDialogSubmit').textContent=editingProject?'Save changes':'Create project';
+ document.getElementById('projectDialog').showModal();document.getElementById('newProjectTitle').focus();
+}
 function closeProjectDialog(){document.getElementById('projectDialog').close();}
 let creatingProject=false;
 async function createProject(event){
@@ -419,9 +441,12 @@ async function createProject(event){
 }
 async function submitProjectForm(form){
  const data=new FormData(form),title=String(data.get('title')||'').trim();if(!title)return;
+ const field=name=>String(data.get(name)||'').trim();
+ const fields={title,subtitle:field('subtitle'),ko:field('ko'),type:normalizeType(data.get('type')),year:field('year')||String(new Date().getFullYear()),location:field('location'),program:field('program')};
+ fields.role=field('role')||(fields.type==='OFFICE'?'Office Work':'Personal Work');
+ if(editingProject)return updateProject(editingProject,fields);
  await loadGitHubAssets();
- const project={id:makeProjectSlug(title),title,subtitle:String(data.get('subtitle')||'').trim(),ko:'',type:normalizeType(data.get('type')),year:String(data.get('year')||new Date().getFullYear()).trim(),pages:[],cover:null,role:'Personal Work',location:String(data.get('location')||'').trim(),program:String(data.get('program')||'').trim(),createdAt:Date.now(),custom:true};
- if(project.type==='OFFICE')project.role='Office Work';
+ const project={id:makeProjectSlug(title),...fields,pages:[],cover:null,createdAt:Date.now(),custom:true};
  project.order=nextProjectOrder(project.type);
  try{
   if(requestGitHubToken()){await saveProjectToGitHub(project);project.github=true;githubAssetPromise=null;}
@@ -429,6 +454,19 @@ async function submitProjectForm(form){
   projects.push(project);sortProjects();closeProjectDialog();renderHome();openProject(project.id);
  }
  catch(error){alert('프로젝트를 저장하지 못했습니다: '+error.message);}
+}
+// Editing keeps the project id (folder name); a type change moves it to the end of the new section.
+async function updateProject(project,fields){
+ const next={...project,...fields};
+ if(next.type!==project.type)next.order=nextProjectOrder(next.type);
+ try{
+  if(project.github){
+   if(!requestGitHubToken())throw new Error('GitHub에 저장된 프로젝트는 토큰이 있어야 수정할 수 있습니다.');
+   await saveProjectMetaToGitHub([next],'Update project '+next.title);
+  }else await saveProjectRecord(next);
+  Object.assign(project,next);sortProjects();closeProjectDialog();renderHome();
+  if(activeProjectId===project.id)openProject(project.id,false);
+ }catch(error){alert('프로젝트를 수정하지 못했습니다: '+error.message);}
 }
 // Reordering: drag a card onto another card of the same type (admin mode only).
 let draggedProjectId=null;
@@ -459,7 +497,7 @@ function moveProject(draggedId,targetId){
    await Promise.all(local.map(project=>saveProjectRecord(project)));
    if(remote.length){
     if(!requestGitHubToken())throw new Error('GitHub 토큰이 없어 이 화면에서만 순서가 바뀌었습니다.');
-    await saveProjectOrderToGitHub(remote,type);
+    await saveProjectMetaToGitHub(remote,'Reorder '+type+' projects');
    }
    setOrderStatus('순서를 저장했습니다.');
   }catch(error){setOrderStatus('');alert('순서를 저장하지 못했습니다: '+error.message);}
@@ -491,7 +529,7 @@ function setupAdmin(){
  if(!new URLSearchParams(location.search).has('manage'))return;
  document.getElementById('modeToggle').classList.remove('hidden');
  document.getElementById('modeToggle').addEventListener('click',()=>{isAdmin=!isAdmin;updateAdminUI();});
- document.getElementById('addProjectButton').addEventListener('click',openProjectDialog);
+ document.getElementById('addProjectButton').addEventListener('click',()=>openProjectDialog());
  document.getElementById('projectForm').addEventListener('submit',createProject);
  document.getElementById('closeProjectDialog').addEventListener('click',closeProjectDialog);
  document.getElementById('cancelProjectButton').addEventListener('click',closeProjectDialog);
