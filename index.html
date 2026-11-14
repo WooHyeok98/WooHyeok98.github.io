@@ -33,7 +33,10 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 .mode-toggle{border:1px solid #aaa;padding:8px 12px;font-size:11px;letter-spacing:.13em;color:#333;transition:background .2s,color .2s,border-color .2s}.mode-toggle:hover{background:#181818;color:#fff;border-color:#181818}
 .index-actions{display:flex;align-items:center;gap:18px}.admin-only.hidden{display:none!important}
 .project-card{position:relative}.project-card-link{display:block}.no-cover{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.16em;color:#aaa}
-.project-dialog{width:min(520px,calc(100vw - 32px));max-width:none;border:1px solid var(--line);padding:28px;background:var(--paper);color:var(--ink);box-shadow:0 18px 60px rgba(0,0,0,.16)}.project-dialog::backdrop{background:rgba(20,20,20,.38);backdrop-filter:blur(3px)}.project-dialog form{display:flex;flex-direction:column;gap:14px}.dialog-head{display:flex;justify-content:space-between;align-items:center}.dialog-head .eyebrow{margin:0}.dialog-close{font-size:25px;line-height:1;color:#888;padding:0 4px}.project-dialog h2{font-size:30px;font-weight:400;letter-spacing:-.05em;margin:0 0 6px}.project-dialog label{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:.1em;color:#777;text-transform:uppercase}.project-dialog input{width:100%;border:1px solid var(--line);background:#fff;padding:11px 12px;font:14px Arial,sans-serif;color:#222;outline:none}.project-dialog input:focus{border-color:#777}.dialog-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:8px}.dialog-actions button{padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #aaa}.dialog-submit{background:#181818!important;color:#fff;border-color:#181818!important}.dialog-cancel:hover,.dialog-close:hover{color:#111;border-color:#555}
+.project-dialog{width:min(520px,calc(100vw - 32px));max-width:none;border:1px solid var(--line);padding:28px;background:var(--paper);color:var(--ink);box-shadow:0 18px 60px rgba(0,0,0,.16)}.project-dialog::backdrop{background:rgba(20,20,20,.38);backdrop-filter:blur(3px)}.project-dialog form{display:flex;flex-direction:column;gap:14px}.dialog-head{display:flex;justify-content:space-between;align-items:center}.dialog-head .eyebrow{margin:0}.dialog-close{font-size:25px;line-height:1;color:#888;padding:0 4px}.project-dialog h2{font-size:30px;font-weight:400;letter-spacing:-.05em;margin:0 0 6px}.project-dialog label{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:.1em;color:#777;text-transform:uppercase}.project-dialog input,.project-dialog select{width:100%;border:1px solid var(--line);background:#fff;padding:11px 12px;font:14px Arial,sans-serif;color:#222;outline:none}.project-dialog input:focus,.project-dialog select:focus{border-color:#777}.dialog-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:8px}.dialog-actions button{padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #aaa}.dialog-submit{background:#181818!important;color:#fff;border-color:#181818!important}.dialog-cancel:hover,.dialog-close:hover{color:#111;border-color:#555}
+.type-head{margin:0 var(--gutter);padding:26px 0 16px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.15em;color:#777;text-transform:uppercase}.type-head strong{font-weight:600;color:var(--ink)}.type-hint{letter-spacing:.04em;text-transform:none;color:#999}
+.project-groups .project-grid{padding-bottom:70px}.project-groups .project-grid:last-child{padding-bottom:110px}
+.project-card[draggable="true"]{cursor:grab}.project-card.dragging{opacity:.35}.project-card.drop-target .cover{outline:2px solid var(--ink);outline-offset:4px}
 .empty-project{font-size:12px;color:#999;letter-spacing:.04em;padding:16px 0;border-bottom:1px solid var(--line)}
 .project-delete{border:1px solid #b8b8b3;color:#777;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}.project-delete:hover{border-color:#222;color:#111}
 @media(max-width:700px){.topnav{gap:10px}.mode-toggle{padding:7px 9px;font-size:10px}.index-actions{gap:10px}.project-dialog{padding:22px}}
@@ -50,8 +53,8 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 <div><p class="eyebrow">Architecture · Selected Work 2018—2026</p><h1>PORT<br>FOLIO.</h1></div>
 <div class="hero-right"><div class="vertical">ARCHITECT DESIGNER<br>KIM WOO HYEOK</div><div class="meta">SELECTED WORK / VOL. 01<br>2018 — 2026</div></div>
 </section>
-<div class="index-head"><span>Selected Projects</span><div class="index-actions"><span id="projectCount">01 — 06</span><button class="upload-button admin-only hidden" id="addProjectButton" type="button">+ Add project</button></div></div>
-<section class="project-grid" id="projectGrid"></section>
+<div class="index-head"><span>Selected Projects</span><div class="index-actions"><span class="admin-only hidden" id="orderStatus" aria-live="polite"></span><span id="projectCount"></span><button class="upload-button admin-only hidden" id="addProjectButton" type="button">+ Add project</button></div></div>
+<section class="project-groups" id="projectGrid"></section>
 <section class="about" id="about"><h2>ABOUT</h2><p class="about-copy">Architecture is a way of shaping relationships between people, space, and the surrounding context. This portfolio collects selected academic and professional projects from 2018 to 2026.</p></section>
 </main>
 <main id="detail" class="hidden"></main>
@@ -61,7 +64,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
   <h2 id="projectDialogTitle">Add a project</h2>
   <label>Project title<input name="title" id="newProjectTitle" required maxlength="90" placeholder="Project name"></label>
   <label>Subtitle<input name="subtitle" maxlength="140" placeholder="Project description"></label>
-  <div class="dialog-row"><label>Year<input name="year" maxlength="12" placeholder="2026"></label><label>Type<input name="type" maxlength="70" placeholder="Personal Work"></label></div>
+  <div class="dialog-row"><label>Year<input name="year" maxlength="12" placeholder="2026"></label><label>Type<select name="type" required><option value="ACADEMIC">ACADEMIC</option><option value="OFFICE">OFFICE</option></select></label></div>
   <label>Location<input name="location" maxlength="120" placeholder="City, Country"></label>
   <label>Program<input name="program" maxlength="120" placeholder="Housing, Culture, etc."></label>
   <div class="dialog-actions"><button class="dialog-cancel" type="button" id="cancelProjectButton">Cancel</button><button class="dialog-submit" type="submit">Create project</button></div>
@@ -71,6 +74,15 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 <script>
 // Projects are stored as asset/{project-id}/project.json in the repository.
 const BUILT_IN_PROJECTS = [];
+// Every project is one of these types. The index shows one section per type, each with its own order.
+const PROJECT_TYPES=['ACADEMIC','OFFICE'];
+function normalizeType(value){return /office/i.test(String(value||''))?'OFFICE':'ACADEMIC';}
+function projectsOfType(type){return projects.filter(project=>project.type===type);}
+function sortProjects(){
+ projects.forEach(project=>{project.type=normalizeType(project.type);});
+ projects.sort((a,b)=>PROJECT_TYPES.indexOf(a.type)-PROJECT_TYPES.indexOf(b.type)||(Number(a.order)||0)-(Number(b.order)||0)||(Number(a.createdAt)||0)-(Number(b.createdAt)||0));
+}
+function nextProjectOrder(type){return projectsOfType(type).reduce((max,project)=>Math.max(max,Number(project.order)||0),0)+1;}
 let projects = [...BUILT_IN_PROJECTS];
 let isAdmin = false;
 let activeProjectId = null;
@@ -133,11 +145,11 @@ async function loadGitHubProjects(){
    const meta=await response.json();
    if(!meta||typeof meta.title!=='string'||!meta.title.trim())return null;
    const text=key=>typeof meta[key]==='string'?meta[key]:'';
-   return {id,title:meta.title.trim(),subtitle:text('subtitle'),ko:text('ko'),type:text('type'),year:text('year'),role:text('role')||'Personal Work',location:text('location'),program:text('program'),createdAt:Number(meta.createdAt)||0,pages:[],cover:null,custom:true,github:true};
+   return {id,title:meta.title.trim(),subtitle:text('subtitle'),ko:text('ko'),type:normalizeType(meta.type),order:Number(meta.order)||0,year:text('year'),role:text('role')||'Personal Work',location:text('location'),program:text('program'),createdAt:Number(meta.createdAt)||0,pages:[],cover:null,custom:true,github:true};
   }catch(error){console.warn(error);return null;}
  }));
- const added=loaded.filter(Boolean).sort((a,b)=>a.createdAt-b.createdAt);
- projects.push(...added);
+ const added=loaded.filter(Boolean);
+ projects.push(...added);sortProjects();
  return added.length;
 }
 function getGitHubToken(){try{return localStorage.getItem(GITHUB_TOKEN_KEY)||'';}catch(error){return '';}}
@@ -181,9 +193,21 @@ function makeProjectSlug(title){
  while(taken.has(id)||!PROJECT_ID_PATTERN.test(id))id=base+'-'+n++;
  return id;
 }
+function projectMetaJSON(project){
+ const meta={title:project.title,subtitle:project.subtitle,ko:project.ko,type:project.type,year:project.year,role:project.role,location:project.location,program:project.program,order:project.order,createdAt:project.createdAt};
+ return JSON.stringify(meta,null,1)+'\n';
+}
 function saveProjectToGitHub(project){
- const meta={title:project.title,subtitle:project.subtitle,ko:project.ko,type:project.type,year:project.year,role:project.role,location:project.location,program:project.program,createdAt:Date.now()};
- return githubContents('PUT','asset/'+project.id+'/'+PROJECT_META_FILE,{message:'Add project '+project.title+' [skip ci]',content:encodeBase64Text(JSON.stringify(meta,null,1)+'\n')});
+ return githubContents('PUT','asset/'+project.id+'/'+PROJECT_META_FILE,{message:'Add project '+project.title+' [skip ci]',content:encodeBase64Text(projectMetaJSON(project))});
+}
+// Writes the new order of several projects in a single commit.
+async function saveProjectOrderToGitHub(changed,type){
+ const ref=await githubGit('GET','ref/heads/'+GITHUB_BRANCH);
+ const head=await githubGit('GET','commits/'+ref.object.sha);
+ const entries=changed.map(project=>({path:'asset/'+project.id+'/'+PROJECT_META_FILE,mode:'100644',type:'blob',content:projectMetaJSON(project)}));
+ const nextTree=await githubGit('POST','trees',{base_tree:head.tree.sha,tree:entries});
+ const commit=await githubGit('POST','commits',{message:'Reorder '+type+' projects [skip ci]',tree:nextTree.sha,parents:[ref.object.sha]});
+ await githubGit('PATCH','refs/heads/'+GITHUB_BRANCH,{sha:commit.sha});
 }
 async function githubGit(method,path,body){
  const token=getGitHubToken();
@@ -191,7 +215,7 @@ async function githubGit(method,path,body){
  const response=await fetch(GITHUB_GIT_URL+path,{method,cache:'no-store',headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},body:body?JSON.stringify(body):undefined});
  if(response.status===401){clearGitHubToken();throw new Error('GitHub 토큰이 올바르지 않습니다. 다시 시도하면 토큰을 새로 입력할 수 있습니다.');}
  if(response.status===403||response.status===404)throw new Error('GitHub 토큰에 이 저장소의 쓰기 권한이 없습니다.');
- if(!response.ok)throw new Error('GitHub 삭제 실패 ('+response.status+')');
+ if(!response.ok)throw new Error('GitHub 요청 실패 ('+response.status+')');
  return response.json();
 }
 // Removes every file under asset/{project-id}/ in a single commit, which also removes the folder.
@@ -253,7 +277,7 @@ async function loadProjects(){
   const byId=new Map((records||[]).map(record=>[record.id,record]));
   const builtIns=BUILT_IN_PROJECTS.filter(project=>!(byId.get(project.id)||{}).deleted);
   const added=(records||[]).filter(record=>record.custom&&!record.deleted);
-  projects=[...builtIns,...added];
+  projects=[...builtIns,...added];sortProjects();
  }catch(error){
   console.warn(error);
   projects=[...BUILT_IN_PROJECTS];
@@ -279,6 +303,7 @@ function updateAdminUI(){
  const addButton=document.getElementById('addProjectButton');
  if(addButton)addButton.classList.toggle('hidden',!isAdmin);
  document.querySelectorAll('.admin-only').forEach(element=>element.classList.toggle('hidden',!isAdmin));
+ document.querySelectorAll('.project-card').forEach(card=>{card.draggable=isAdmin;});
  if(activeProjectId){const active=projects.find(project=>project.id===activeProjectId);if(active)renderUploadedImages(active);}
 }
 async function refreshProjectCardCover(projectId){
@@ -287,17 +312,22 @@ async function refreshProjectCardCover(projectId){
   const cover=document.querySelector(`[data-cover-for="${projectId}"]`);
   if(!cover)return;
   const project=projects.find(item=>item.id===projectId);
-  if(shared.length){cover.innerHTML=`<img src="${shared[0].url}" alt="${escapeHTML(project?.title||'Project')} project cover" loading="lazy">`;return;}
-  if(records.length){cover.innerHTML=`<img src="${URL.createObjectURL(records[0].blob)}" alt="Project image" loading="lazy">`;return;}
+  if(shared.length){cover.innerHTML=`<img src="${shared[0].url}" alt="${escapeHTML(project?.title||'Project')} project cover" loading="lazy" draggable="false">`;return;}
+  if(records.length){cover.innerHTML=`<img src="${URL.createObjectURL(records[0].blob)}" alt="Project image" loading="lazy" draggable="false">`;return;}
   cover.innerHTML='<span class="no-cover">PROJECT IMAGE</span>';
  }catch(error){console.warn(error);}
 }
 function renderHome(){
- grid.innerHTML=projects.map((p,i)=>`<article class="project-card">
-  <a class="project-card-link" href="#${p.id}" onclick="openProject('${p.id}');return false;">
+ grid.innerHTML=PROJECT_TYPES.map(type=>{
+  const items=projectsOfType(type);
+  if(!items.length)return '';
+  return `<div class="type-head"><strong>${type}</strong><span class="type-hint admin-only ${isAdmin?'':'hidden'}">카드를 드래그해 순서를 바꿀 수 있습니다</span><span>${String(items.length).padStart(2,'0')}</span></div>
+  <div class="project-grid" data-type="${type}">${items.map(p=>`<article class="project-card" data-project-id="${p.id}" draggable="${isAdmin}">
+  <a class="project-card-link" href="#${p.id}" draggable="false" onclick="openProject('${p.id}');return false;">
    <div class="cover" data-cover-for="${p.id}"></div>
    <div class="card-info"><div><h2 class="card-title">${escapeHTML(p.title)}</h2><p class="card-sub">${escapeHTML(p.subtitle)}${p.ko?' · '+escapeHTML(p.ko):''}</p></div><span class="card-year">${escapeHTML(p.year)}</span></div>
-  </a></article>`).join('');
+  </a></article>`).join('')}</div>`;
+ }).join('');
  document.getElementById('projectCount').textContent=`${String(projects.length).padStart(2,'0')} PROJECTS`;
  projects.forEach(p=>refreshProjectCardCover(p.id));
  updateAdminUI();
@@ -390,13 +420,71 @@ async function createProject(event){
 async function submitProjectForm(form){
  const data=new FormData(form),title=String(data.get('title')||'').trim();if(!title)return;
  await loadGitHubAssets();
- const project={id:makeProjectSlug(title),title,subtitle:String(data.get('subtitle')||'').trim(),ko:'',type:String(data.get('type')||'Personal Work').trim(),year:String(data.get('year')||new Date().getFullYear()).trim(),pages:[],cover:null,role:'Personal Work',location:String(data.get('location')||'').trim(),program:String(data.get('program')||'').trim(),custom:true};
+ const project={id:makeProjectSlug(title),title,subtitle:String(data.get('subtitle')||'').trim(),ko:'',type:normalizeType(data.get('type')),year:String(data.get('year')||new Date().getFullYear()).trim(),pages:[],cover:null,role:'Personal Work',location:String(data.get('location')||'').trim(),program:String(data.get('program')||'').trim(),createdAt:Date.now(),custom:true};
+ if(project.type==='OFFICE')project.role='Office Work';
+ project.order=nextProjectOrder(project.type);
  try{
   if(requestGitHubToken()){await saveProjectToGitHub(project);project.github=true;githubAssetPromise=null;}
   else await saveProjectRecord(project);
-  projects.push(project);closeProjectDialog();renderHome();openProject(project.id);
+  projects.push(project);sortProjects();closeProjectDialog();renderHome();openProject(project.id);
  }
  catch(error){alert('프로젝트를 저장하지 못했습니다: '+error.message);}
+}
+// Reordering: drag a card onto another card of the same type (admin mode only).
+let draggedProjectId=null;
+let orderSaveQueue=Promise.resolve();
+function clearDropTargets(){grid.querySelectorAll('.drop-target').forEach(card=>card.classList.remove('drop-target'));}
+function dropTargetCard(event){
+ const card=event.target.closest('.project-card');
+ if(!card||!draggedProjectId||card.dataset.projectId===draggedProjectId)return null;
+ const dragged=projects.find(project=>project.id===draggedProjectId);
+ return dragged&&card.parentElement.dataset.type===dragged.type?card:null;
+}
+function setOrderStatus(text){const status=document.getElementById('orderStatus');if(status)status.textContent=text;}
+function moveProject(draggedId,targetId){
+ const dragged=projects.find(project=>project.id===draggedId);
+ const items=projectsOfType(dragged.type);
+ const from=items.indexOf(dragged),to=items.findIndex(project=>project.id===targetId);
+ if(from<0||to<0||from===to)return;
+ items.splice(to,0,items.splice(from,1)[0]);
+ const changed=[];
+ items.forEach((project,index)=>{if(project.order!==index+1){project.order=index+1;changed.push(project);}});
+ sortProjects();renderHome();
+ if(!changed.length)return;
+ const type=dragged.type;
+ orderSaveQueue=orderSaveQueue.then(async()=>{
+  setOrderStatus('순서 저장 중…');
+  try{
+   const local=changed.filter(project=>!project.github),remote=changed.filter(project=>project.github);
+   await Promise.all(local.map(project=>saveProjectRecord(project)));
+   if(remote.length){
+    if(!requestGitHubToken())throw new Error('GitHub 토큰이 없어 이 화면에서만 순서가 바뀌었습니다.');
+    await saveProjectOrderToGitHub(remote,type);
+   }
+   setOrderStatus('순서를 저장했습니다.');
+  }catch(error){setOrderStatus('');alert('순서를 저장하지 못했습니다: '+error.message);}
+ });
+}
+function setupReorder(){
+ grid.addEventListener('dragstart',event=>{
+  const card=event.target.closest('.project-card');
+  if(!isAdmin||!card){event.preventDefault();return;}
+  draggedProjectId=card.dataset.projectId;card.classList.add('dragging');
+  event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',draggedProjectId);
+ });
+ grid.addEventListener('dragover',event=>{
+  const card=dropTargetCard(event);clearDropTargets();
+  if(!card)return;
+  event.preventDefault();event.dataTransfer.dropEffect='move';card.classList.add('drop-target');
+ });
+ grid.addEventListener('drop',event=>{
+  const card=dropTargetCard(event);
+  if(!card)return;
+  event.preventDefault();
+  const draggedId=draggedProjectId;draggedProjectId=null;
+  moveProject(draggedId,card.dataset.projectId);
+ });
+ grid.addEventListener('dragend',()=>{draggedProjectId=null;clearDropTargets();grid.querySelectorAll('.dragging').forEach(card=>card.classList.remove('dragging'));});
 }
 function setupAdmin(){
  // The MANAGE toggle only appears when the page is opened with ?manage.
@@ -409,7 +497,7 @@ function setupAdmin(){
  document.getElementById('cancelProjectButton').addEventListener('click',closeProjectDialog);
 }
 async function init(){
- setupAdmin();await loadProjects();renderHome();
+ setupAdmin();setupReorder();await loadProjects();renderHome();
  const initial=location.hash.slice(1);if(projects.some(p=>p.id===initial))openProject(initial,false);
  if(await loadGitHubProjects()){renderHome();if(!activeProjectId&&projects.some(p=>p.id===location.hash.slice(1)))openProject(location.hash.slice(1),false);}
 }
