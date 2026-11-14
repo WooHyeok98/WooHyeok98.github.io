@@ -90,7 +90,7 @@ function loadGitHubAssets(){
    .then(data=>{
     const next=new Map();
     (data.tree||[]).forEach(item=>{
-     if(item.type!=='blob'||!item.path.startsWith('asset/')||!IMAGE_EXTENSIONS.some(ext=>item.path.toLowerCase().endsWith(ext)))return;
+     if(item.type!=='blob'||!item.path.startsWith('asset/')||typeof item.size!=='number'||item.size<100||!IMAGE_EXTENSIONS.some(ext=>item.path.toLowerCase().endsWith(ext)))return;
      const parts=item.path.split('/');
      if(parts.length<3)return;
      const projectId=parts[1];
