@@ -85,7 +85,7 @@ let githubAssetMap=new Map();
 let githubAssetPromise=null;
 function loadGitHubAssets(){
  if(!githubAssetPromise){
-  githubAssetPromise=fetch(GITHUB_ASSET_TREE_URL,{cache:'no-cache'})
+  githubAssetPromise=fetch(GITHUB_ASSET_TREE_URL,{cache:'default'})
    .then(response=>{if(!response.ok)throw new Error('GitHub 이미지 목록을 불러오지 못했습니다.');return response.json();})
    .then(data=>{
     const next=new Map();
