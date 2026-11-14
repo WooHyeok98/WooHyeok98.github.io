@@ -16,7 +16,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 26px}
 .hero h1{font-size:clamp(58px,10.8vw,166px);line-height:.78;letter-spacing:-.085em;font-weight:400;margin:0;max-width:900px}
 .hero-right{display:flex;flex-direction:column;align-items:flex-start;gap:30px;padding-bottom:4px}.hero-right .vertical{font-size:13px;letter-spacing:.08em;line-height:1.8;color:#555}.hero-right .meta{font-size:11px;letter-spacing:.13em;color:#888;text-transform:uppercase}
-.index-head{padding:0 var(--gutter) clamp(14px,1.8vw,26px);display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:4px solid var(--line);font-size:11px;letter-spacing:.15em;color:#777;text-transform:uppercase}.index-title{font-size:clamp(22px,2.8vw,40px);font-weight:700;letter-spacing:-.01em;line-height:1}
+.index-head{padding:0 var(--gutter) 16px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:3px solid var(--line);font-size:11px;letter-spacing:.15em;color:#777;text-transform:uppercase}.index-title{font-weight:600}
 .project-grid{padding:28px var(--gutter) 110px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;row-gap:64px}
 .project-card{display:block;min-width:0}.cover{overflow:hidden;background:#e8e8e5;aspect-ratio:1.48/1;position:relative}.cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}.project-card:hover .cover img{transform:scale(1.025)}
 .card-info{display:grid;grid-template-columns:1fr auto;gap:10px;padding-top:14px}.card-title{font-size:15px;letter-spacing:.025em;font-weight:500;margin:0 0 5px}.card-sub{font-size:12px;color:#000;margin:0;line-height:1.5}.card-year{font-size:12px;color:#000;letter-spacing:.08em}
@@ -42,7 +42,6 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 .project-delete{border:1px solid #b8b8b3;color:#777;padding:10px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}.project-delete:hover{border-color:#222;color:#111}
 @media(max-width:700px){.topnav{gap:10px}.mode-toggle{padding:7px 9px;font-size:10px}.index-actions{gap:10px}.project-dialog{padding:22px}}
 
-@media(max-width:700px){.index-head{border-bottom-width:3px;flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -55,7 +54,7 @@ main{min-height:75vh}.hero{padding:clamp(60px,10vw,150px) var(--gutter) 80px;dis
 <div><p class="eyebrow">Architecture · Selected Work 2018—2026</p><h1>PORT<br>FOLIO.</h1></div>
 <div class="hero-right"><div class="vertical">ARCHITECT DESIGNER<br>KIM WOO HYEOK</div><div class="meta">SELECTED WORK / VOL. 01<br>2018 — 2026</div></div>
 </section>
-<div class="index-head"><span class="index-title">Selected Projects</span><div class="index-actions"><span class="admin-only hidden" id="orderStatus" aria-live="polite"></span><span id="projectCount"></span><button class="upload-button admin-only hidden" id="addProjectButton" type="button">+ Add project</button></div></div>
+<div class="index-head"><span class="index-title">Selected Works</span><div class="index-actions"><span class="admin-only hidden" id="orderStatus" aria-live="polite"></span><span id="projectCount"></span><button class="upload-button admin-only hidden" id="addProjectButton" type="button">+ Add project</button></div></div>
 <section class="project-groups" id="projectGrid"></section>
 <section class="about" id="about"><h2>ABOUT</h2><p class="about-copy">Architecture is a way of shaping relationships between people, space, and the surrounding context. This portfolio collects selected academic and professional projects from 2018 to 2026.</p></section>
 </main>
