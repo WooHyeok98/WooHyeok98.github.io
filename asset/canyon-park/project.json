@@ -8,5 +8,12 @@
  "location": "Nasung-dong, Sejong, Korea",
  "program": "Mixed-use Development",
  "order": 3,
- "createdAt": 3
+ "createdAt": 3,
+ "images": [
+  "12-page.webp",
+  "13-page.webp",
+  "14-page.webp",
+  "15-page.webp",
+  "16-page.webp"
+ ]
 }

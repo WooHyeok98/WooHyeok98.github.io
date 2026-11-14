@@ -8,5 +8,16 @@
  "location": "Hoenam-myeon, Boeun-gun, Korea",
  "program": "Museum, Motel, F&B, Garage, Community",
  "order": 1,
- "createdAt": 1
+ "createdAt": 1,
+ "images": [
+  "01-cover.webp",
+  "02-page.webp",
+  "03-page.webp",
+  "04-page.webp",
+  "05-page.webp",
+  "06-page.webp",
+  "07-page.webp",
+  "08-page.webp",
+  "09-page.webp"
+ ]
 }

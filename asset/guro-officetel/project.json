@@ -8,5 +8,10 @@
  "location": "Guro-dong, Seoul, Korea",
  "program": "Interior Design",
  "order": 2,
- "createdAt": 6
+ "createdAt": 6,
+ "images": [
+  "29-page.webp",
+  "30-page.webp",
+  "31-page.webp"
+ ]
 }

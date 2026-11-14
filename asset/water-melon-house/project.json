@@ -8,5 +8,11 @@
  "location": "Haemil-dong, Sejong, Korea",
  "program": "Detached House",
  "order": 1,
- "createdAt": 5
+ "createdAt": 5,
+ "images": [
+  "25-page.webp",
+  "26-page.webp",
+  "27-page.webp",
+  "28-page.webp"
+ ]
 }
